@@ -219,25 +219,17 @@ public class test {
 //		}
 		ArrayList<ArrayList<Integer>> etats = new ArrayList<>();
 		ArrayList<Integer> etat = new ArrayList<>();
+		ArrayList<Integer> etatDejaTraites = new ArrayList<>();
 
 		for (int i = 0; i < a.getNbStates(); i++) {
-			eps(a, etat, i);
-			if (etats.size() > 0) {
-				for (ArrayList<Integer> e : etats) {
-					if (!e.containsAll(etat)) {
-						if (etat.get(0) == 5) {
-							System.out.println(etat);
-							System.out.println(e);
-						}
-						etats.add(etat);
-						break;
-					}
-				}
-			} else {
+			if (!etatDejaTraites.contains(i)) {
+				eps(a, etat, i);
 				etats.add(etat);
+				for (Integer e : etat) {
+					etatDejaTraites.add(e);
+				}
+				etat = new ArrayList<Integer>();
 			}
-			System.out.println(etat);
-			etat = new ArrayList<Integer>();
 		}
 
 		for (ArrayList<Integer> e : etats) {
@@ -253,7 +245,6 @@ public class test {
 		etat.add(d);
 		for (int j = 0; j < a.getNbStates(); j++) {
 			if (a.getEpsilon()[d][j] == 1) {
-				a.modifEps(d, j);
 				eps(a, etat, j);
 			}
 		}
