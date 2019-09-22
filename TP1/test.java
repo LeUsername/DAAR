@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -51,6 +55,15 @@ public class test {
 		res.addEpsilon(res.getStart(), a2.getStart() + a1.getNbStates() + 1);
 		res.addEpsilon(a2.getEnd() + a1.getNbStates() + 1, res.getEnd());
 
+		ArrayList<Tuple> etoile = new ArrayList<Tuple>();
+		for (Tuple e : a1.getEtoile()) {
+			etoile.add(new Tuple(e.x + 1, e.y + 1));
+		}
+		for (Tuple e : a2.getEtoile()) {
+			etoile.add(new Tuple(e.x + a1.getNbStates() + 1, e.y + a1.getNbStates() + 1));
+		}
+		res.setEtoile(etoile);
+
 		return res;
 	}
 
@@ -90,6 +103,15 @@ public class test {
 		}
 		res.addEpsilon(a1.getEnd(), a2.getStart() + a1.getNbStates());
 
+		ArrayList<Tuple> etoile = new ArrayList<Tuple>();
+		for (Tuple e : a1.getEtoile()) {
+			etoile.add(new Tuple(e.x, e.y));
+		}
+		for (Tuple e : a2.getEtoile()) {
+			etoile.add(new Tuple(e.x + a1.getNbStates(), e.y + a1.getNbStates()));
+		}
+		res.setEtoile(etoile);
+
 		return res;
 	}
 
@@ -117,6 +139,10 @@ public class test {
 		res.addEpsilon(a1.getEnd() + 1, end);
 		res.addEpsilon(start, end);
 		res.addEpsilon(a1.getEnd() + 1, a1.getStart() + 1);
+
+		ArrayList<Tuple> etoile = new ArrayList<Tuple>();
+		etoile.add(new Tuple(start + 1, end - 1));
+		res.setEtoile(etoile);
 
 		return res;
 	}
@@ -231,14 +257,12 @@ public class test {
 				etat = new ArrayList<Integer>();
 			}
 		}
-
 		for (ArrayList<Integer> e : etats) {
 			for (Integer i : e) {
 				System.out.print(i);
 			}
 			System.out.println("---");
 		}
-
 		AutomateDeterministe res = new AutomateDeterministe(etats, a);
 		return res;
 	}
@@ -250,26 +274,68 @@ public class test {
 				eps(a, etat, j);
 			}
 		}
+	}
 
+	private static boolean lecture() {
+		String ligne = null;
+		String[] mots = null;
+
+		Scanner scanner = new Scanner(System.in);
+		System.out.print("  >> Please enter a regEx Tree: ");
+		regExTree = scanner.next();
+		Automate gerp = conversion(regExTree);
+		AutomateDeterministe grep = determinise(gerp);
+
+		try {
+			FileReader f = new FileReader("gutenberg.txt");
+			BufferedReader b = new BufferedReader(f);
+			while ((ligne = b.readLine()) != null) {
+				mots = ligne.split(" ");
+				for (String m : mots) {
+					if (monGrep(grep, m)) {
+					}
+				}
+			}
+			b.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Impossible de trouver le fichier");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			scanner.close();
+		}
+		return false;
+	}
+
+	private static boolean monGrep(AutomateDeterministe automate, String mot) {
+		int etatCourant = automate.getStart().get(0);
+		for (int i = 0; i < mot.length(); i++) {
+			etatCourant = automate.getAutom()[etatCourant][(int) mot.charAt(i)];
+			if (etatCourant == -1) {
+				return false;
+			}
+		}
+		return automate.getEnd().contains(etatCourant);
 	}
 
 	private static String regExTree;
 
 	public static void main(String arg[]) {
-		if (arg.length != 0) {
-			regExTree = arg[0];
-		} else {
-			Scanner scanner = new Scanner(System.in);
-			System.out.print("  >> Please enter a regEx Tree: ");
-			regExTree = scanner.next();
-		}
-		System.out.println("---Voici les transitions de votre automate---");
-		Automate test = conversion(regExTree);
-		test.affiche();
-		System.out.println("-------");
-		test.afficheEpsilon();
-		System.out.println("-------");
-		AutomateDeterministe autoDeterminise = determinise(test);
-		autoDeterminise.affiche();
+		System.out.println(lecture());
+//		if (arg.length != 0) {
+//			regExTree = arg[0];
+//		} else {
+//			Scanner scanner = new Scanner(System.in);
+//			System.out.print("  >> Please enter a regEx Tree: ");
+//			regExTree = scanner.next();
+//		}
+//		System.out.println("---Voici les transitions de votre automate---");
+//		Automate test = conversion(regExTree);
+//		test.affiche();
+//		System.out.println("-------");
+//		test.afficheEpsilon();
+//		System.out.println("-------");
+//		AutomateDeterministe autoDeterminise = determinise(test);
+//		autoDeterminise.affiche();
 	}
 }

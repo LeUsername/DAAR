@@ -36,16 +36,42 @@ public class AutomateDeterministe {
 		 * Correspondance anciens états - nouveaux états
 		 */
 		Map<Integer, Integer> correspondance = new HashMap<Integer, Integer>();
+		boolean appartientEtoile = false;
 		int etatCourant = 0;
+		boolean ajoutFait = false;
 		for (ArrayList<Integer> e : etats) {
 			for (Integer ancienEtat : e) {
-				correspondance.putIfAbsent(ancienEtat, etatCourant);
+				/*
+				 * On verifie si l'etat fait partie d'une etoile et peut donc etre groupé avec
+				 * les autres états de l'étoile
+				 */
+				for (Tuple t : a.getEtoile()) {
+					if (t.x <= ancienEtat && ancienEtat <= t.y) {
+						appartientEtoile = true;
+						if (correspondance.get(t.x) == null) {
+							correspondance.put(t.x, etatCourant);
+						}
+						correspondance.putIfAbsent(ancienEtat, correspondance.get(t.x));
+						break;
+					}
+				}
+				if (!appartientEtoile) {
+					correspondance.putIfAbsent(ancienEtat, etatCourant);
+				} else {
+					appartientEtoile = false;
+				}
+			}
+			if (appartientEtoile) {
+				appartientEtoile = false;
 			}
 			etatCourant++;
 		}
 		Iterator<Integer> iterateur = correspondance.keySet().iterator();
 		while (iterateur.hasNext()) {
 			Integer ancienEtat = iterateur.next();
+			if (ancienEtat == a.getEnd()) {
+				end.add(correspondance.get(ancienEtat));
+			}
 			for (int j = 0; j < NB_TRANSITIONS; j++) {
 				if (a.getAutom()[ancienEtat][j] != -1) {
 					autom[correspondance.get(ancienEtat)][j] = correspondance.get(a.getAutom()[ancienEtat][j]);
@@ -53,9 +79,6 @@ public class AutomateDeterministe {
 					 * Les états finaux de l'automate déterminisé sont tous les nouveaux états qui
 					 * ont été créés depuis l'état final de l'ancien automate
 					 */
-					if (ancienEtat == a.getEnd()) {
-						end.add(correspondance.get(ancienEtat));
-					}
 					nbTransitions++;
 				}
 			}
@@ -71,6 +94,26 @@ public class AutomateDeterministe {
 //				autom[i][j] = transitions[i][j];
 //			}
 //		}
+	}
+
+	public ArrayList<Integer> getStart() {
+		return start;
+	}
+
+	public void setStart(ArrayList<Integer> start) {
+		this.start = start;
+	}
+
+	public Set<Integer> getEnd() {
+		return end;
+	}
+
+	public void setEnd(Set<Integer> end) {
+		this.end = end;
+	}
+
+	public int[][] getAutom() {
+		return autom;
 	}
 
 	public void affiche() {

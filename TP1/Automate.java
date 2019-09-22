@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class Automate {
 
@@ -11,14 +12,16 @@ public class Automate {
 	private int[][] autom;
 	private int[][] epsilon;
 
+	private ArrayList<Tuple> etoile = new ArrayList<>();
+
 	public Automate(int s, int e, int nbS, int nbT) {
 		start = s;
 		end = e;
 		nbStates = nbS;
 		nbTransitions = nbT;
-		
+
 		autom = new int[nbStates][NB_TRANSITIONS];
-		
+
 		for (int i = 0; i < nbStates; i++) {
 			for (int j = 0; j < NB_TRANSITIONS; j++) {
 				autom[i][j] = -1;
@@ -26,7 +29,7 @@ public class Automate {
 		}
 
 		epsilon = new int[nbStates][nbStates];
-		
+
 		for (int i = 0; i < nbStates; i++) {
 			for (int j = 0; j < nbStates; j++) {
 				epsilon[i][j] = 0;
@@ -34,10 +37,11 @@ public class Automate {
 		}
 
 	}
-	
-	public void modifEps(int i,int j) {
+
+	public void modifEps(int i, int j) {
 		epsilon[i][j] = 0;
 	}
+
 	public void addTransition(int a, int b, int t) {
 		autom[a][t] = b;
 	}
@@ -92,6 +96,14 @@ public class Automate {
 
 	public void setEpsilon(int[][] epsilon) {
 		this.epsilon = epsilon;
+	}
+	
+	public ArrayList<Tuple> getEtoile() {
+		return etoile;
+	}
+
+	public void setEtoile(ArrayList<Tuple> etoile) {
+		this.etoile = etoile;
 	}
 
 	public void affiche() {
