@@ -185,7 +185,7 @@ public class test {
 		}
 	}
 
-	public static void determinise(Automate a) {
+	public static AutomateDeterministe determinise(Automate a) {
 //		Map<ArrayList<Integer>, Integer> etats = new HashMap<>();
 //		ArrayList<Integer> etat = new ArrayList<>();
 //		Integer nouveauIdentifiant = 0;
@@ -233,12 +233,14 @@ public class test {
 		}
 
 		for (ArrayList<Integer> e : etats) {
-
 			for (Integer i : e) {
 				System.out.print(i);
 			}
 			System.out.println("---");
 		}
+
+		AutomateDeterministe res = new AutomateDeterministe(etats, a);
+		return res;
 	}
 
 	private static void eps(Automate a, ArrayList<Integer> etat, int d) {
@@ -267,7 +269,7 @@ public class test {
 		System.out.println("-------");
 		test.afficheEpsilon();
 		System.out.println("-------");
-		determinise(test);
-
+		AutomateDeterministe autoDeterminise = determinise(test);
+		autoDeterminise.affiche();
 	}
 }
