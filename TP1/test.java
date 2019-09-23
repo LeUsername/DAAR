@@ -212,37 +212,37 @@ public class test {
 	}
 
 	public static AutomateDeterministe determinise(Automate a) {
-//		Map<ArrayList<Integer>, Integer> etats = new HashMap<>();
-//		ArrayList<Integer> etat = new ArrayList<>();
-//		Integer nouveauIdentifiant = 0;
-//
-//		for (int i = 0; i < a.getNbStates(); i++) {
-//			eps(a, etat, i);
-//			Iterator<ArrayList<Integer>> iterateur = etats.keySet().iterator();
-//			if (etats.size() > 0) {
-//				while (iterateur.hasNext()) {
-//					ArrayList<Integer> e = iterateur.next();
-//					if (!e.containsAll(etat)) {
-//						etats.put(etat, nouveauIdentifiant);
-//						nouveauIdentifiant++;
-//						break;
-//					}
-//				}
-//			} else {
-//				etats.put(etat, nouveauIdentifiant);
-//				nouveauIdentifiant++;
-//			}
-//			System.out.println(etat);
-//			etat = new ArrayList<Integer>();
-//		}
-//		Iterator<ArrayList<Integer>> iterateur = etats.keySet().iterator();
-//		while (iterateur.hasNext()) {
-//			ArrayList<Integer> e = iterateur.next();
-//			for (Integer i : e) {
-//				System.out.print(i);
-//			}
-//			System.out.println("---");
-//		}
+		// Map<ArrayList<Integer>, Integer> etats = new HashMap<>();
+		// ArrayList<Integer> etat = new ArrayList<>();
+		// Integer nouveauIdentifiant = 0;
+		//
+		// for (int i = 0; i < a.getNbStates(); i++) {
+		// eps(a, etat, i);
+		// Iterator<ArrayList<Integer>> iterateur = etats.keySet().iterator();
+		// if (etats.size() > 0) {
+		// while (iterateur.hasNext()) {
+		// ArrayList<Integer> e = iterateur.next();
+		// if (!e.containsAll(etat)) {
+		// etats.put(etat, nouveauIdentifiant);
+		// nouveauIdentifiant++;
+		// break;
+		// }
+		// }
+		// } else {
+		// etats.put(etat, nouveauIdentifiant);
+		// nouveauIdentifiant++;
+		// }
+		// System.out.println(etat);
+		// etat = new ArrayList<Integer>();
+		// }
+		// Iterator<ArrayList<Integer>> iterateur = etats.keySet().iterator();
+		// while (iterateur.hasNext()) {
+		// ArrayList<Integer> e = iterateur.next();
+		// for (Integer i : e) {
+		// System.out.print(i);
+		// }
+		// System.out.println("---");
+		// }
 		ArrayList<ArrayList<Integer>> etats = new ArrayList<>();
 		ArrayList<Integer> etat = new ArrayList<>();
 		ArrayList<Integer> etatDejaTraites = new ArrayList<>();
@@ -279,6 +279,7 @@ public class test {
 	private static boolean lecture() {
 		String ligne = null;
 		String[] mots = null;
+		int cpt = 0;
 
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("  >> Please enter a regEx Tree: ");
@@ -292,7 +293,12 @@ public class test {
 			while ((ligne = b.readLine()) != null) {
 				mots = ligne.split(" ");
 				for (String m : mots) {
+					if (m == "") {
+						continue;
+					}
 					if (monGrep(grep, m)) {
+						cpt++;
+						System.out.println(m);
 					}
 				}
 			}
@@ -304,15 +310,35 @@ public class test {
 		} finally {
 			scanner.close();
 		}
+		System.out.println(cpt);
 		return false;
 	}
 
 	private static boolean monGrep(AutomateDeterministe automate, String mot) {
 		int etatCourant = automate.getStart().get(0);
+		boolean premiereLettre = false;
+		ArrayList<Integer> transitionsDepuisEtatInitial = new ArrayList<>();
+		for (int i = 0; i < Automate.NB_TRANSITIONS; i++) {
+			if (automate.getAutom()[etatCourant][i] != -1) {
+				transitionsDepuisEtatInitial.add(i);
+			}
+		}
 		for (int i = 0; i < mot.length(); i++) {
-			etatCourant = automate.getAutom()[etatCourant][(int) mot.charAt(i)];
+			if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int) mot.charAt(i)) % 256))
+					&& !premiereLettre) {
+				continue;
+			} else {
+				premiereLettre = true;
+			}
+			if ((int) mot.charAt(i) == 65279) {
+				premiereLettre = false;
+				continue;
+			}
+			etatCourant = automate.getAutom()[etatCourant][((int) mot.charAt(i)) % 256];
 			if (etatCourant == -1) {
 				return false;
+			} else if (automate.getEnd().contains(etatCourant)) {
+				return true;
 			}
 		}
 		return automate.getEnd().contains(etatCourant);
@@ -322,20 +348,20 @@ public class test {
 
 	public static void main(String arg[]) {
 		System.out.println(lecture());
-//		if (arg.length != 0) {
-//			regExTree = arg[0];
-//		} else {
-//			Scanner scanner = new Scanner(System.in);
-//			System.out.print("  >> Please enter a regEx Tree: ");
-//			regExTree = scanner.next();
-//		}
-//		System.out.println("---Voici les transitions de votre automate---");
-//		Automate test = conversion(regExTree);
-//		test.affiche();
-//		System.out.println("-------");
-//		test.afficheEpsilon();
-//		System.out.println("-------");
-//		AutomateDeterministe autoDeterminise = determinise(test);
-//		autoDeterminise.affiche();
+		// if (arg.length != 0) {
+		// regExTree = arg[0];
+		// } else {
+		// Scanner scanner = new Scanner(System.in);
+		// System.out.print(" >> Please enter a regEx Tree: ");
+		// regExTree = scanner.next();
+		// }
+		// System.out.println("---Voici les transitions de votre automate---");
+		// Automate test = conversion(regExTree);
+		// test.affiche();
+		// System.out.println("-------");
+		// test.afficheEpsilon();
+		// System.out.println("-------");
+		// AutomateDeterministe autoDeterminise = determinise(test);
+		// autoDeterminise.affiche();
 	}
 }
