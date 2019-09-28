@@ -15,6 +15,14 @@ public class RegEx {
 	// REGEX
 	private static String regEx;
 
+	public static String getRegEx() {
+		return regEx;
+	}
+
+	public static void setRegEx(String regEx) {
+		RegEx.regEx = regEx;
+	}
+
 	// CONSTRUCTOR
 	public RegEx() {
 	}
@@ -53,7 +61,7 @@ public class RegEx {
 	}
 
 	// FROM REGEX TO SYNTAX TREE
-	private static RegExTree parse() throws Exception {
+	public static RegExTree parse() throws Exception {
 		// BEGIN DEBUG: set conditionnal to true for debug example
 		if (false)
 			throw new Exception();

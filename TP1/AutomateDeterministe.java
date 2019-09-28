@@ -20,11 +20,10 @@ public class AutomateDeterministe {
 	public AutomateDeterministe(ArrayList<ArrayList<Integer>> etats, Automate a) {
 		nbStates = etats.size();
 		autom = new int[nbStates][NB_TRANSITIONS];
-		int[][] tmp = new int[nbStates][NB_TRANSITIONS];
+
 		for (int i = 0; i < nbStates; i++) {
 			for (int j = 0; j < NB_TRANSITIONS; j++) {
 				autom[i][j] = -1;
-				tmp[i][j] = -1;
 			}
 		}
 		/*
@@ -39,6 +38,13 @@ public class AutomateDeterministe {
 		boolean appartientEtoile = false;
 		int etatCourant = 0;
 		boolean ajoutFait = false;
+
+		/*
+		 * Dictionnaire permettant de retrouver les états de l'ancien automate qui sont
+		 * présents dans plusieurs états du nouvel automate déterministe
+		 */
+		Map<Integer, Set<Integer>> etatsCommuns = new HashMap<>();
+
 		for (ArrayList<Integer> e : etats) {
 			for (Integer ancienEtat : e) {
 				/*
@@ -56,6 +62,12 @@ public class AutomateDeterministe {
 					}
 				}
 				if (!appartientEtoile) {
+					if (correspondance.containsKey(ancienEtat)) {
+						if (!etatsCommuns.containsKey(ancienEtat)) {
+							etatsCommuns.put(ancienEtat, new HashSet<Integer>());
+						}
+						etatsCommuns.get(ancienEtat).add(etatCourant);
+					}
 					correspondance.putIfAbsent(ancienEtat, etatCourant);
 				} else {
 					appartientEtoile = false;
@@ -66,19 +78,47 @@ public class AutomateDeterministe {
 			}
 			etatCourant++;
 		}
+
 		Iterator<Integer> iterateur = correspondance.keySet().iterator();
+//		for (int i = 0; i < a.getNbStates(); i++) {
+//			for (int j = i + 1; j < a.getNbStates(); j++) {
+//				for (int t = 0; t < NB_TRANSITIONS; t++) {
+//					int avecI = a.getAutom()[i][t];
+//					int avecJ = a.getAutom()[j][t];
+//					if (avecI == -1 || avecJ == -1) {
+//						continue;
+//					}
+//					if (avecI == avecJ) {
+//						System.out.println("dedans hehe");
+////						autom[correspondance.get(i)][t] = avecI;
+////						autom[correspondance.get(j)][t] = avecI;
+//						nbTransitions++;
+//					}
+//
+//				}
+//			}
+//		}
 		while (iterateur.hasNext()) {
 			Integer ancienEtat = iterateur.next();
 			if (ancienEtat == a.getEnd()) {
+				/*
+				 * Les états finaux de l'automate déterminisé sont tous les nouveaux états qui
+				 * ont été créés depuis l'état final de l'ancien automate
+				 */
 				end.add(correspondance.get(ancienEtat));
 			}
 			for (int j = 0; j < NB_TRANSITIONS; j++) {
 				if (a.getAutom()[ancienEtat][j] != -1) {
+					Set<Integer> listeEtats = etatsCommuns.get(ancienEtat);
+					if (listeEtats != null) {
+						if (listeEtats.size() >= 1) {
+							for (Integer e : etatsCommuns.get(ancienEtat)) {
+								autom[e][j] = correspondance.get(a.getAutom()[ancienEtat][j]);
+								nbTransitions++;
+							}
+						}
+					}
 					autom[correspondance.get(ancienEtat)][j] = correspondance.get(a.getAutom()[ancienEtat][j]);
-					/*
-					 * Les états finaux de l'automate déterminisé sont tous les nouveaux états qui
-					 * ont été créés depuis l'état final de l'ancien automate
-					 */
 					nbTransitions++;
 				}
 			}

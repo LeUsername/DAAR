@@ -282,9 +282,21 @@ public class test {
 		int cpt = 0;
 
 		Scanner scanner = new Scanner(System.in);
-		System.out.print("  >> Please enter a regEx Tree: ");
-		regExTree = scanner.next();
-		Automate gerp = conversion(regExTree);
+		System.out.print("  >> Please enter a regEx: ");
+		String string = scanner.next();
+		RegEx regEx = new RegEx();
+		regEx.setRegEx(string);
+		RegExTree regExTree = null;
+		try {
+			regExTree = regEx.parse();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.print("  >> The regExp Tree is : ");
+		System.out.println(regExTree.toString());
+
+		Automate gerp = conversion(regExTree.toString());
 		AutomateDeterministe grep = determinise(gerp);
 
 		try {
@@ -310,7 +322,7 @@ public class test {
 		} finally {
 			scanner.close();
 		}
-		System.out.println(cpt);
+		System.out.println("I have found " + cpt + " valid words");
 		return false;
 	}
 
@@ -348,20 +360,20 @@ public class test {
 
 	public static void main(String arg[]) {
 		System.out.println(lecture());
-		// if (arg.length != 0) {
-		// regExTree = arg[0];
-		// } else {
-		// Scanner scanner = new Scanner(System.in);
-		// System.out.print(" >> Please enter a regEx Tree: ");
-		// regExTree = scanner.next();
-		// }
-		// System.out.println("---Voici les transitions de votre automate---");
-		// Automate test = conversion(regExTree);
-		// test.affiche();
-		// System.out.println("-------");
-		// test.afficheEpsilon();
-		// System.out.println("-------");
-		// AutomateDeterministe autoDeterminise = determinise(test);
-		// autoDeterminise.affiche();
+//		if (arg.length != 0) {
+//			regExTree = arg[0];
+//		} else {
+//			Scanner scanner = new Scanner(System.in);
+//			System.out.print(" >> Please enter a regEx Tree: ");
+//			regExTree = scanner.next();
+//		}
+//		System.out.println("---Voici les transitions de votre automate---");
+//		Automate test = conversion(regExTree);
+//		test.affiche();
+//		System.out.println("-------");
+//		test.afficheEpsilon();
+//		System.out.println("-------");
+//		AutomateDeterministe autoDeterminise = determinise(test);
+//		autoDeterminise.affiche();
 	}
 }
