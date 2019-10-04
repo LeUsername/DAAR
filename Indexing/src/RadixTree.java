@@ -101,7 +101,7 @@ public class RadixTree {
 
 	public static void main(String args[]) {
 		RadixTree rt = new RadixTree();
-		rt.listeMots("/users/nfs/Etu5/3408625/Bureau/S3/DAAR/Indexing/test.txt");
+		rt.listeMots("/users/nfs/Etu5/3408625/Bureau/S3/DAAR/Indexing/bab1.txt");
 		rt.printeur();
 	}
 
