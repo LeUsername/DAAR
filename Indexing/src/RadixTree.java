@@ -1,15 +1,34 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Scanner;
 
 public class RadixTree {
 
-	String value = "";
+	Tuple value;
 	ArrayList<RadixTree> fils = new ArrayList<>();
 
-	public String getValue() {
+	public RadixTree(Tuple v) {
+		value = v;
+	}
+
+	public RadixTree(String v) {
+		value = new Tuple(v);
+	}
+
+	public Tuple getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Tuple value) {
 		this.value = value;
 	}
 
@@ -21,66 +40,150 @@ public class RadixTree {
 		this.fils = fils;
 	}
 
-	public RadixTree(String v) {
-		value = v;
-	}
+	public void build(String chemin) {
+		System.out.println("start");
+		String line = null;
+		Set<String> ensembleMots = new HashSet<>();
 
-	public void add(String r) {
+		FileReader fileReader = null;
+		try {
+			fileReader = new FileReader(chemin);
 
-	}
-
-	public void remove(String r) {
-	}
-
-	public String search(String r) {
-		if(r.length()==0) {
-			return "le mot n'y est pas";
-		}
-		if (!isPrefix(r, this.value) ) {
-			return "le mot n'y est pas";
-		}
-		
-		String prefixe = getPrefix(r, this.value);
-		String reste = r.substring(prefixe.length(), r.length());
-		if (reste.length() == 0) {
-			return r;
-		}
-		RadixTree rt = null;
-		ArrayList<RadixTree> current = fils;
-		if (current.size() > 0) {
-			rt = current.get(0);
-		} else {
-			return "le mot n'y est pas!";
-		}
-		while (reste.length() > 0 && current.size() > 0) {
-			for (int i = 0; i < current.size(); i++) {
-				rt = current.get(i);
-				if (isPrefix(reste, rt.value)) {
-					
-					prefixe = getPrefix(reste, rt.value);
-					if (prefixe.length() == reste.length()) {
-						
-						if (prefixe.equals(reste)) {
-							reste = "";
-						} else {
-							return "le mot n'y est pas!!";
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			try {
+				while ((line = bufferedReader.readLine()) != null) {
+					String[] mots = line.split("[^0-9A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ'-]");
+					for (String m : mots) {
+						if (m.length() <= 2) {
+							continue;
 						}
-						break;
+						ensembleMots.add(m.toLowerCase());
 					}
-					reste = reste.substring(prefixe.length(), rt.value.length());
-					current = rt.fils;
-					break;
 				}
-				else {
-					return "le mot n'y est pas!!!";
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			fileReader.close();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+
+		List<String> lines = Collections.emptyList();
+		try {
+			lines = Files.readAllLines(Paths.get(chemin), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		int i = 0;
+		System.out.println("computing");
+		for (String l : ensembleMots) {
+
+			i = 0;
+			for (String l2 : lines) {
+				String line2 = l2.toLowerCase();
+				i++;
+				Matching m = new Matching(line2, l);
+				m.match();
+				ArrayList<Integer> ind = m.getIndices();
+				if (ind.size() == 0) {
+					continue;
+				} else {
+					for (Integer b : ind) {
+						StringBuilder toWrite = new StringBuilder();
+						toWrite.append(i + "," + b);
+						ArrayList<String> occurence = new ArrayList<>();
+						occurence.add(toWrite.toString());
+						Tuple toAdd = new Tuple(l, occurence);
+						add(toAdd);
+					}
 				}
 			}
 		}
-		if (reste.length() == 0) {
-			return r;
-		} else {
-			return "le mot n'y est pas!!!!";
+	}
+
+	public void add(Tuple tuple) {
+		if (tuple.mot.length() == 0) {
+			return;
 		}
+		String reste = tuple.mot;
+		RadixTree rt = null;
+		ArrayList<RadixTree> current = fils;
+		if (current.size() <= 0) {
+			current.add(new RadixTree(tuple));
+		} else {
+			String prefixe;
+			int i = 0;
+			while (current.size() > 0 && current.size() > i) {
+				rt = current.get(i);
+				if (rt.value.mot.equals(reste)) {
+					rt.value.occurences.add(tuple.occurences.get(0));
+					return;
+				} else {
+					if (isPrefix(reste, rt.getValue().mot)) {
+						prefixe = getPrefix(reste, rt.getValue().mot);
+						reste = reste.substring(prefixe.length(), reste.length());
+						if (reste.length() == 0) {
+							String tmp = rt.value.mot.substring(prefixe.length(), rt.value.mot.length());
+							rt.value.mot = prefixe;
+							Tuple tupleFils = new Tuple();
+							tupleFils.mot = tmp;
+							tupleFils.occurences = rt.value.occurences;
+							RadixTree rtFils = new RadixTree(tupleFils);
+							rtFils.setFils(rt.fils);
+							ArrayList<RadixTree> nouveauFils = new ArrayList<>();
+							nouveauFils.add(rtFils);
+							rt.setFils(nouveauFils);
+							return;
+						} else {
+							current = rt.getFils();
+							i = 0;
+						}
+					} else {
+						i++;
+					}
+				}
+			}
+			Tuple tupleFils = new Tuple();
+			tupleFils.mot = reste;
+			tupleFils.occurences = tuple.occurences;
+			RadixTree rtFils = new RadixTree(tupleFils);
+			current.add(rtFils);
+		}
+	}
+
+	public Tuple search(String r) {
+		if (r.length() == 0) {
+			return new Tuple();
+		}
+		String reste = r.toLowerCase();
+		RadixTree rt;
+		ArrayList<RadixTree> current = fils;
+		if (current.size() <= 0) {
+			return new Tuple();
+		}
+		String prefixe;
+		int i = 0;
+		while (current.size() > 0 && current.size() > i) {
+			rt = current.get(i);
+			if (rt.value.mot.equals(reste)) {
+				return rt.value;
+			} else {
+				if (isPrefix(reste, rt.getValue().mot)) {
+					prefixe = getPrefix(reste, rt.getValue().mot);
+					reste = reste.substring(prefixe.length(), reste.length());
+					if (reste.length() == 0) {
+						return new Tuple();
+					} else {
+						current = rt.getFils();
+						i = 0;
+					}
+				} else {
+					i++;
+				}
+			}
+		}
+		return new Tuple();
 	}
 
 	public boolean isPrefix(String s1, String s2) {
@@ -114,17 +217,26 @@ public class RadixTree {
 	}
 
 	public static void main(String args[]) {
-		// RadixTree rt = new RadixTree("mabite");
-		// System.out.println(rt.isPrefix("ma", "mabite"));
-		// System.out.println(rt.getPrefix("mabite", "mab"));
-		RadixTree rom = new RadixTree("rom");
-		RadixTree an = new RadixTree("an");
-		RadixTree ulus = new RadixTree("ulus");
-		ArrayList<RadixTree> arbre = new ArrayList<>();
-		arbre.add(ulus);
-		arbre.add(an);
-		rom.setFils(arbre);
-		System.out.println(rom.search(""));
+
+		String fileName = "/users/nfs/Etu5/3408625/Bureau/S3/DAAR/Indexing/bab1.txt";
+		try (Scanner scanner = new Scanner(System.in)) {
+			RadixTree racine = new RadixTree("");
+			racine.build(fileName);
+			String[] tab = fileName.split("/");
+			while (true) {
+				System.out.print("Enter a word to find in " + tab[tab.length - 1]+" >>> ");
+				String w = scanner.nextLine();
+				Tuple res = racine.search(w);
+				if (res.occurences.size() == 0) {
+					System.out.println("this world never appears");
+				} else {
+					System.out.println("the word " + w + " appears at : [line,ind] ");
+					System.out.println(res.occurences);
+				}
+
+			}
+
+		}
 	}
 
 }
