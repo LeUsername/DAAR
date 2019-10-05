@@ -1,108 +1,130 @@
-import static java.util.Comparator.comparingInt;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class RadixTree {
-	private HashMap<String, ArrayList<String>> freq = new HashMap<>();
 
-	public HashMap<String, ArrayList<String>> getFreq() {
-		return freq;
+	String value = "";
+	ArrayList<RadixTree> fils = new ArrayList<>();
+
+	public String getValue() {
+		return value;
 	}
 
-	public void listeMots(String chemin) {
-		String line = null;
-		Set<String> ensembleMots = new HashSet<>();
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-		FileReader fileReader = null;
-		try {
-			fileReader = new FileReader(chemin);
+	public ArrayList<RadixTree> getFils() {
+		return fils;
+	}
 
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-			try {
-				while ((line = bufferedReader.readLine()) != null) {
-					String[] mots = line.split("[^0-9A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ'-]");
-					for (String m : mots) {
-						ensembleMots.add(m);
-					}
-				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			fileReader.close();
-		} catch (IOException e2) {
-			e2.printStackTrace();
+	public void setFils(ArrayList<RadixTree> fils) {
+		this.fils = fils;
+	}
+
+	public RadixTree(String v) {
+		value = v;
+	}
+
+	public void add(String r) {
+
+	}
+
+	public void remove(String r) {
+	}
+
+	public String search(String r) {
+		if(r.length()==0) {
+			return "le mot n'y est pas";
 		}
-
-		List<String> lines = Collections.emptyList();
-		try {
-			lines = Files.readAllLines(Paths.get(chemin), StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (!isPrefix(r, this.value) ) {
+			return "le mot n'y est pas";
 		}
-
-		int i = 0;
-
-		for (String l : ensembleMots) {
-			i = 0;
-			for (String line2 : lines) {
-				i++;
-				Matching m = new Matching(line2, l);
-				m.match();
-				ArrayList<Integer> ind = m.getIndices();
-				if (ind.size() == 0) {
-					continue;
-				} else {
-					for (Integer b : ind) {
-						StringBuilder toWrite = new StringBuilder();
-						if (freq.containsKey(l)) {
-							toWrite.append(i + "," + b);
-							freq.get(l).add(toWrite.toString());
+		
+		String prefixe = getPrefix(r, this.value);
+		String reste = r.substring(prefixe.length(), r.length());
+		if (reste.length() == 0) {
+			return r;
+		}
+		RadixTree rt = null;
+		ArrayList<RadixTree> current = fils;
+		if (current.size() > 0) {
+			rt = current.get(0);
+		} else {
+			return "le mot n'y est pas!";
+		}
+		while (reste.length() > 0 && current.size() > 0) {
+			for (int i = 0; i < current.size(); i++) {
+				rt = current.get(i);
+				if (isPrefix(reste, rt.value)) {
+					
+					prefixe = getPrefix(reste, rt.value);
+					if (prefixe.length() == reste.length()) {
+						
+						if (prefixe.equals(reste)) {
+							reste = "";
 						} else {
-							toWrite.append(i + "," + b);
-							freq.put(l, new ArrayList<>());
-							freq.get(l).add(toWrite.toString());
+							return "le mot n'y est pas!!";
 						}
+						break;
 					}
+					reste = reste.substring(prefixe.length(), rt.value.length());
+					current = rt.fils;
+					break;
+				}
+				else {
+					return "le mot n'y est pas!!!";
 				}
 			}
 		}
-		HashMap<String, ArrayList<String>> sortedMap = freq.entrySet().stream()
-				.sorted(comparingInt(e -> e.getValue().size()))
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> {
-					throw new AssertionError();
-				}, LinkedHashMap::new));
-
-		freq = sortedMap;
-
+		if (reste.length() == 0) {
+			return r;
+		} else {
+			return "le mot n'y est pas!!!!";
+		}
 	}
 
-	public void printeur() {
-		Iterator<String> iterateur = freq.keySet().iterator();
-		while (iterateur.hasNext()) {
-			String key = iterateur.next();
-			System.out.println(key + ": " + freq.get(key));
+	public boolean isPrefix(String s1, String s2) {
+		return s1.charAt(0) == s2.charAt(0);
+	}
+
+	public String getPrefix(String s1, String s2) {
+		StringBuilder res = new StringBuilder();
+		int i = 0;
+		if (s1.length() > s2.length()) {
+			while (i < s2.length() && s1.charAt(i) == s2.charAt(i)) {
+				res.append(s1.charAt(i));
+				i++;
+			}
+			return res.toString();
+		} else {
+			if (s1.length() < s2.length()) {
+				while (i < s1.length() && s1.charAt(i) == s2.charAt(i)) {
+					res.append(s1.charAt(i));
+					i++;
+				}
+				return res.toString();
+			} else {
+				while (i < s2.length() && s1.charAt(i) == s2.charAt(i)) {
+					res.append(s1.charAt(i));
+					i++;
+				}
+				return res.toString();
+			}
 		}
 	}
 
 	public static void main(String args[]) {
-		RadixTree rt = new RadixTree();
-		rt.listeMots("/users/nfs/Etu5/3408625/Bureau/S3/DAAR/Indexing/bab1.txt");
-		rt.printeur();
+		// RadixTree rt = new RadixTree("mabite");
+		// System.out.println(rt.isPrefix("ma", "mabite"));
+		// System.out.println(rt.getPrefix("mabite", "mab"));
+		RadixTree rom = new RadixTree("rom");
+		RadixTree an = new RadixTree("an");
+		RadixTree ulus = new RadixTree("ulus");
+		ArrayList<RadixTree> arbre = new ArrayList<>();
+		arbre.add(ulus);
+		arbre.add(an);
+		rom.setFils(arbre);
+		System.out.println(rom.search(""));
 	}
 
 }
