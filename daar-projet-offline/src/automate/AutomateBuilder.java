@@ -304,6 +304,7 @@ public class AutomateBuilder {
 		int etatCourant = automate.getStart().get(0);
 		boolean premiereLettre = false;
 		ArrayList<Integer> transitionsDepuisEtatInitial = new ArrayList<>();
+		ArrayList<Integer> transitionsDejaAppliquees = new ArrayList<>();
 		for (int i = 0; i < Automate.NB_TRANSITIONS; i++) {
 			if (automate.getAutom()[etatCourant][i] != -1) {
 				transitionsDepuisEtatInitial.add(i);
@@ -312,6 +313,7 @@ public class AutomateBuilder {
 		for (int i = 0; i < mot.length(); i++) {
 			if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int) mot.charAt(i)) % 256))
 					&& !premiereLettre) {
+				transitionsDejaAppliquees.clear();
 				continue;
 			} else {
 				premiereLettre = true;
@@ -326,8 +328,11 @@ public class AutomateBuilder {
 				i--;
 				premiereLettre = false;
 				etatCourant = automate.getStart().get(0);
-			} else if (automate.getEnd().contains(etatCourant)) {
-				return true;
+			} else {
+				transitionsDejaAppliquees.add(((int) mot.charAt(i)) % 256);
+				if (automate.getEnd().contains(etatCourant)) {
+					return true;
+				}
 			}
 		}
 		return automate.getEnd().contains(etatCourant);
