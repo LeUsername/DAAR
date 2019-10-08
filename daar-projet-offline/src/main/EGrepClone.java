@@ -69,29 +69,28 @@ public class EGrepClone {
 				BufferedReader b = new BufferedReader(f);
 				while ((ligne = b.readLine()) != null) {
 					mots = ligne.split(" ");
+					ArrayList<String> matched = new ArrayList<>();
 					for (String m : mots) {
 						if (m == "") {
 							continue;
 						}
+
 						if (ab.monGrep(grep, m)) {
-							for (String m2 : mots) {
-								if (m2.contains(m)) {
-									for (int i = 0; i < m2.length(); i++) {
-										if (m2.charAt(i) != m.charAt(0)) {
-											System.out.print(BLACK + m2.charAt(i));
-										} else {
-											System.out.print(AUTRE + m);
-											i += m.length() - 1;
-										}
-									}
-								} else {
-									System.out.print(BLACK + m2);
-								}
-								System.out.print(" ");
-							}
-							System.out.println();
+							matched.add(m);
 						}
 					}
+					if (matched.size() == 0) {
+						continue;
+					}
+					for (String m : mots) {
+						if (matched.contains(m)) {
+							System.out.print(AUTRE + m);
+						} else {
+							System.out.print(BLACK + m);
+						}
+						System.out.print(BLACK + " ");
+					}
+					System.out.println();
 				}
 				b.close();
 			} catch (FileNotFoundException e) {
@@ -101,7 +100,9 @@ public class EGrepClone {
 			} finally {
 				scanner.close();
 			}
-		} else {
+		} else
+
+		{
 			List<String> lines = Collections.emptyList();
 			try {
 				lines = Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
@@ -128,7 +129,7 @@ public class EGrepClone {
 						} else {
 							System.out.print(BLACK + m2);
 						}
-						System.out.print(" ");
+						System.out.print(BLACK + " ");
 					}
 					System.out.println();
 				}

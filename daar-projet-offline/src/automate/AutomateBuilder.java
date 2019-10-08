@@ -1,4 +1,5 @@
 package automate;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -230,12 +231,12 @@ public class AutomateBuilder {
 				etat = new ArrayList<Integer>();
 			}
 		}
-//		for (ArrayList<Integer> e : etats) {
-//			for (Integer i : e) {
-//				System.out.print(i);
-//			}
-//			System.out.println("---");
-//		}
+		// for (ArrayList<Integer> e : etats) {
+		// for (Integer i : e) {
+		// System.out.print(i);
+		// }
+		// System.out.println("---");
+		// }
 		AutomateDeterministe res = new AutomateDeterministe(etats, a);
 		return res;
 	}
@@ -319,9 +320,12 @@ public class AutomateBuilder {
 				premiereLettre = false;
 				continue;
 			}
+
 			etatCourant = automate.getAutom()[etatCourant][((int) mot.charAt(i)) % 256];
 			if (etatCourant == -1) {
-				return false;
+				i--;
+				premiereLettre = false;
+				etatCourant = automate.getStart().get(0);
 			} else if (automate.getEnd().contains(etatCourant)) {
 				return true;
 			}
@@ -329,9 +333,7 @@ public class AutomateBuilder {
 		return automate.getEnd().contains(etatCourant);
 	}
 
-	
-
-//	public static void main(String arg[]) {
-//		System.out.println(lecture());
-//	}
+	// public static void main(String arg[]) {
+	// System.out.println(lecture());
+	// }
 }

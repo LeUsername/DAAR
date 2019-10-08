@@ -61,7 +61,7 @@ public class Matching {
 				if (correspondanceLettresIndice.get(String.valueOf(facteur[i])) == null) {
 					correspondanceLettresIndice.put(String.valueOf(facteur[i]), i);
 				} else {
-					retenue[i] = retenue[correspondanceLettresIndice.get(String.valueOf(facteur[i]))];
+						retenue[i] = retenue[correspondanceLettresIndice.get(String.valueOf(facteur[i]))];
 				}
 			}
 		}

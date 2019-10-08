@@ -52,7 +52,7 @@ public class RadixTree {
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			try {
 				while ((line = bufferedReader.readLine()) != null) {
-					String[] mots = line.split("[^0-9A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ'-]");
+					String[] mots = line.split("[^A-Za-z'àáâãäåçèéêëìíîïðòóôõöùúûüýÿ'-]");
 					for (String m : mots) {
 						if (m.length() <= 2) {
 							continue;
@@ -218,7 +218,7 @@ public class RadixTree {
 
 	public static void main(String args[]) {
 
-		String fileName = "/users/nfs/Etu5/3408625/Bureau/S3/DAAR/Indexing/bab1.txt";
+		String fileName = "bab1.txt";
 		try (Scanner scanner = new Scanner(System.in)) {
 			RadixTree racine = new RadixTree("");
 			racine.build(fileName);
