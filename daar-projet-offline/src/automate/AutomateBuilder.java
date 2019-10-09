@@ -312,61 +312,61 @@ public class AutomateBuilder {
 				transitionsDepuisEtatInitial.add(i);
 			}
 		}
-//		int j = 0;
-//		while(j<mo.length()) {
-//			if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int) mo.charAt(j)) % 256))
-//					&& !premiereLettre) {
-//				transitionsDejaAppliquees.clear();
-//				j++;
-//				continue;
-//			} else {
-//				premiereLettre = true;
-//			}
-//			if ((int) mo.charAt(j) == 65279) {
-//				premiereLettre = false;
-//				j++;
-//				continue;
-//			}
-//
-//			etatCourant = automate.getAutom()[etatCourant][((int) mo.charAt(j)) % 256];
-//			if (etatCourant == -1) {
-//				mo.substring(1, mo.length()-1);
-//				j=0;
-//				premiereLettre = false;
-//				etatCourant = automate.getStart().get(0);
-//			} else {
-//				transitionsDejaAppliquees.add(((int) mo.charAt(j)) % 256);
-//				if (automate.getEnd().contains(etatCourant)) {
-//					return true;
-//				}
-//			}
-//			j++;
-//		}
-		for (int i = 0; i < mot.length(); i++) {
-			if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int) mot.charAt(i)) % 256))
+		int j = 0;
+		while (j < mo.length()) {
+			if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int) mo.charAt(j)) % 256))
 					&& !premiereLettre) {
 				transitionsDejaAppliquees.clear();
+				j++;
 				continue;
 			} else {
 				premiereLettre = true;
 			}
-			if ((int) mot.charAt(i) == 65279) {
+			if ((int) mo.charAt(j) == 65279) {
 				premiereLettre = false;
+				j++;
 				continue;
 			}
 
-			etatCourant = automate.getAutom()[etatCourant][((int) mot.charAt(i)) % 256];
+			etatCourant = automate.getAutom()[etatCourant][((int) mo.charAt(j)) % 256];
 			if (etatCourant == -1) {
-				i--;
+				mo = mo.substring(1, mo.length());
+				j = 0;
 				premiereLettre = false;
 				etatCourant = automate.getStart().get(0);
 			} else {
-				transitionsDejaAppliquees.add(((int) mot.charAt(i)) % 256);
+				transitionsDejaAppliquees.add(((int) mo.charAt(j)) % 256);
 				if (automate.getEnd().contains(etatCourant)) {
 					return true;
 				}
 			}
+			j++;
 		}
+//		for (int i = 0; i < mot.length(); i++) {
+//			if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int) mot.charAt(i)) % 256))
+//					&& !premiereLettre) {
+//				transitionsDejaAppliquees.clear();
+//				continue;
+//			} else {
+//				premiereLettre = true;
+//			}
+//			if ((int) mot.charAt(i) == 65279) {
+//				premiereLettre = false;
+//				continue;
+//			}
+//
+//			etatCourant = automate.getAutom()[etatCourant][((int) mot.charAt(i)) % 256];
+//			if (etatCourant == -1) {
+//				i--;
+//				premiereLettre = false;
+//				etatCourant = automate.getStart().get(0);
+//			} else {
+//				transitionsDejaAppliquees.add(((int) mot.charAt(i)) % 256);
+//				if (automate.getEnd().contains(etatCourant)) {
+//					return true;
+//				}
+//			}
+//		}
 		return automate.getEnd().contains(etatCourant);
 	}
 
