@@ -301,15 +301,47 @@ public class AutomateBuilder {
 	}
 
 	public static boolean monGrep(AutomateDeterministe automate, String mot) {
+		String mo = mot;
 		int etatCourant = automate.getStart().get(0);
 		boolean premiereLettre = false;
 		ArrayList<Integer> transitionsDepuisEtatInitial = new ArrayList<>();
 		ArrayList<Integer> transitionsDejaAppliquees = new ArrayList<>();
+		
 		for (int i = 0; i < Automate.NB_TRANSITIONS; i++) {
 			if (automate.getAutom()[etatCourant][i] != -1) {
 				transitionsDepuisEtatInitial.add(i);
 			}
 		}
+//		int j = 0;
+//		while(j<mo.length()) {
+//			if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int) mo.charAt(j)) % 256))
+//					&& !premiereLettre) {
+//				transitionsDejaAppliquees.clear();
+//				j++;
+//				continue;
+//			} else {
+//				premiereLettre = true;
+//			}
+//			if ((int) mo.charAt(j) == 65279) {
+//				premiereLettre = false;
+//				j++;
+//				continue;
+//			}
+//
+//			etatCourant = automate.getAutom()[etatCourant][((int) mo.charAt(j)) % 256];
+//			if (etatCourant == -1) {
+//				mo.substring(1, mo.length()-1);
+//				j=0;
+//				premiereLettre = false;
+//				etatCourant = automate.getStart().get(0);
+//			} else {
+//				transitionsDejaAppliquees.add(((int) mo.charAt(j)) % 256);
+//				if (automate.getEnd().contains(etatCourant)) {
+//					return true;
+//				}
+//			}
+//			j++;
+//		}
 		for (int i = 0; i < mot.length(); i++) {
 			if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int) mot.charAt(i)) % 256))
 					&& !premiereLettre) {
