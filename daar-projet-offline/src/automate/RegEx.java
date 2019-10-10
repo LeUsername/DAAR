@@ -72,13 +72,29 @@ public class RegEx {
 		// END DEBUG
 
 		ArrayList<RegExTree> result = new ArrayList<RegExTree>();
-		for (int i = 0; i < regEx.length(); i++)
-			result.add(new RegExTree(charToRoot(regEx.charAt(i)), new ArrayList<RegExTree>()));
+		for (int i = 0; i < regEx.length(); i++) {
+			if(charToRoot(regEx.charAt(i)) == -1) {
+				i++;
+				if(charToRoot(regEx.charAt(i)) == DOT) {
+					result.add(new RegExTree((int)'.', new ArrayList<RegExTree>()));
+				}
+				else {
+					result.add(new RegExTree((int)regEx.charAt(i), new ArrayList<RegExTree>()));
+				}
+			}
+			else {
+				result.add(new RegExTree(charToRoot(regEx.charAt(i)), new ArrayList<RegExTree>()));
+			}
+			
+		}
+			
 
 		return parse(result);
 	}
 
 	private static int charToRoot(char c) {
+		if(c == '\\')
+			return -1;
 		if (c == '.')
 			return DOT;
 		if (c == '*')

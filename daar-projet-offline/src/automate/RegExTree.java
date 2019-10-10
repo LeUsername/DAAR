@@ -31,6 +31,8 @@ public class RegExTree {
 				return "|";
 			if (root == RegEx.DOT)
 				return ".";
+			if( root == (int)'.')
+				return "\\.";
 			return Character.toString((char) root);
 		}
 

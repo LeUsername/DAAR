@@ -13,6 +13,18 @@ public class AutomateBuilder {
 
 	public static Automate unitaire(int t) {
 		Automate a = new Automate(0, 1, 2, 1);
+		if (t == (int) '.') {
+			for (int j = 0; j < Automate.NB_TRANSITIONS; j++) {
+				a.addTransition(0, 1, j);
+			}
+		} else {
+			a.addTransition(0, 1, t);
+		}
+		return a;
+	}
+
+	public static Automate unitairePoint(int t) {
+		Automate a = new Automate(0, 1, 2, 1);
 		a.addTransition(0, 1, t);
 		return a;
 	}
@@ -181,7 +193,11 @@ public class AutomateBuilder {
 		if (expression.charAt(0) == '|') {
 			return union(conversion(trucAGauche.toString()), conversion(trucADroite.toString()));
 		} else if (expression.charAt(0) == '.') {
-			return concat(conversion(trucAGauche.toString()), conversion(trucADroite.toString()));
+//			if (trucAGauche.toString().equals("\\")) {
+//				return unitairePoint(Integer.parseInt(trucADroite.toString()));
+//			} else {
+				return concat(conversion(trucAGauche.toString()), conversion(trucADroite.toString()));
+//			}
 		} else {
 			return null; // NE DOIT PAS RENTRER DANS CE CAS
 		}
@@ -189,10 +205,16 @@ public class AutomateBuilder {
 
 	public static Automate conversion(String expression) {
 		switch (expression.charAt(0)) {
+		case '\\':
+			return unitairePoint((int) expression.charAt(1));
 		case '|':
 			return binaire('|', expression);
 		case '.':
-			return binaire('.', expression);
+			if (expression.length() > 1 && expression.charAt(1) == '(') {
+				return binaire('.', expression);
+			} else {
+				return unitaire((int) expression.charAt(0));
+			}
 		case '*':
 			int cptParenthese = 1;
 			StringBuilder truc = new StringBuilder();
@@ -306,7 +328,7 @@ public class AutomateBuilder {
 		boolean premiereLettre = false;
 		ArrayList<Integer> transitionsDepuisEtatInitial = new ArrayList<>();
 		ArrayList<Integer> transitionsDejaAppliquees = new ArrayList<>();
-		
+
 		for (int i = 0; i < Automate.NB_TRANSITIONS; i++) {
 			if (automate.getAutom()[etatCourant][i] != -1) {
 				transitionsDepuisEtatInitial.add(i);
@@ -342,31 +364,32 @@ public class AutomateBuilder {
 			}
 			j++;
 		}
-//		for (int i = 0; i < mot.length(); i++) {
-//			if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int) mot.charAt(i)) % 256))
-//					&& !premiereLettre) {
-//				transitionsDejaAppliquees.clear();
-//				continue;
-//			} else {
-//				premiereLettre = true;
-//			}
-//			if ((int) mot.charAt(i) == 65279) {
-//				premiereLettre = false;
-//				continue;
-//			}
-//
-//			etatCourant = automate.getAutom()[etatCourant][((int) mot.charAt(i)) % 256];
-//			if (etatCourant == -1) {
-//				i--;
-//				premiereLettre = false;
-//				etatCourant = automate.getStart().get(0);
-//			} else {
-//				transitionsDejaAppliquees.add(((int) mot.charAt(i)) % 256);
-//				if (automate.getEnd().contains(etatCourant)) {
-//					return true;
-//				}
-//			}
-//		}
+		// for (int i = 0; i < mot.length(); i++) {
+		// if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int)
+		// mot.charAt(i)) % 256))
+		// && !premiereLettre) {
+		// transitionsDejaAppliquees.clear();
+		// continue;
+		// } else {
+		// premiereLettre = true;
+		// }
+		// if ((int) mot.charAt(i) == 65279) {
+		// premiereLettre = false;
+		// continue;
+		// }
+		//
+		// etatCourant = automate.getAutom()[etatCourant][((int) mot.charAt(i)) % 256];
+		// if (etatCourant == -1) {
+		// i--;
+		// premiereLettre = false;
+		// etatCourant = automate.getStart().get(0);
+		// } else {
+		// transitionsDejaAppliquees.add(((int) mot.charAt(i)) % 256);
+		// if (automate.getEnd().contains(etatCourant)) {
+		// return true;
+		// }
+		// }
+		// }
 		return automate.getEnd().contains(etatCourant);
 	}
 

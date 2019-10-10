@@ -19,8 +19,6 @@ import automate.RegEx;
 import automate.RegExTree;
 import kmp.Matching;
 
-import java.awt.Color;
-
 public class EGrepClone {
 
 	static String BLACK = "\u001B[0m";
@@ -29,6 +27,11 @@ public class EGrepClone {
 	static String chemin = "files/";
 
 	static boolean isRegExp(String s) {
+		for (int i = 1; i < s.length(); i++) {
+			if (s.charAt(i) == '.' && s.charAt(i-1) != '\\') {
+				return true;
+			}
+		}
 		for (int i = 0; i < s.length(); i++) {
 			if (s.charAt(i) == '|' || s.charAt(i) == '*') {
 				return true;
