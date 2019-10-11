@@ -8,11 +8,18 @@ import java.util.Set;
 
 import tools.Etoile;
 
+/**
+ * Classe qui represente un automate determinisé et minimisé
+ * @author 3408625
+ *
+ */
 public class AutomateDeterministe {
-
 	static final int NB_TRANSITIONS = 256;
 
+	// les états de départ
 	private ArrayList<Integer> start = new ArrayList<Integer>();
+	
+	// les états finaux
 	private Set<Integer> end = new HashSet<Integer>();
 
 	private int nbStates = 0;
@@ -30,12 +37,12 @@ public class AutomateDeterministe {
 			}
 		}
 		/*
-		 * L'�tat initial correspond forc�ment au premier �tat �tant donn� qu'on
-		 * (re)nomme � chaque cr�ation d'automate de mani�re � avoir 0 en premier �tat
+		 * L'etat initial correspond forcement au premier etat etant donne qu'on
+		 * (re)nomme a chaque creation d'automate de maniere a avoir 0 en premier etat
 		 */
 		start = etats.get(0);
 		/*
-		 * Correspondance anciens �tats - nouveaux �tats
+		 * Correspondance anciens etats - nouveaux etats
 		 */
 		Map<Integer, Integer> correspondance = new HashMap<Integer, Integer>();
 		boolean appartientEtoile = false;
@@ -43,16 +50,16 @@ public class AutomateDeterministe {
 		boolean ajoutFait = false;
 
 		/*
-		 * Dictionnaire permettant de retrouver les �tats de l'ancien automate qui sont
-		 * pr�sents dans plusieurs �tats du nouvel automate d�terministe
+		 * Dictionnaire permettant de retrouver les etats de l'ancien automate qui sont
+		 * presents dans plusieurs etats du nouvel automate deterministe
 		 */
 		Map<Integer, Set<Integer>> etatsCommuns = new HashMap<>();
 
 		for (ArrayList<Integer> e : etats) {
 			for (Integer ancienEtat : e) {
 				/*
-				 * On verifie si l'etat fait partie d'une etoile et peut donc etre group� avec
-				 * les autres �tats de l'�toile
+				 * On verifie si l'etat fait partie d'une etoile et peut donc etre groupe avec
+				 * les autres etats de l'etoile
 				 */
 				for (Etoile t : a.getEtoile()) {
 					if (t.x <= ancienEtat && ancienEtat <= t.y) {
@@ -87,8 +94,8 @@ public class AutomateDeterministe {
 			Integer ancienEtat = iterateur.next();
 			if (ancienEtat == a.getEnd()) {
 				/*
-				 * Les �tats finaux de l'automate d�terminis� sont tous les nouveaux �tats qui
-				 * ont �t� cr��s depuis l'�tat final de l'ancien automate
+				 * Les etats finaux de l'automate determinise sont tous les nouveaux etats qui
+				 * ont ete crees depuis l'etat final de l'ancien automate
 				 */
 				end.add(correspondance.get(ancienEtat));
 			}

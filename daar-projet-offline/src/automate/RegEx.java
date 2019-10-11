@@ -74,6 +74,7 @@ public class RegEx {
 		ArrayList<RegExTree> result = new ArrayList<RegExTree>();
 		for (int i = 0; i < regEx.length(); i++) {
 			if(charToRoot(regEx.charAt(i)) == -1) {
+				// Ajout dans le parseur le moyen d'echapper des caracteres, ici on echappe le caractere
 				i++;
 				if(charToRoot(regEx.charAt(i)) == DOT) {
 					result.add(new RegExTree((int)'.', new ArrayList<RegExTree>()));
@@ -93,6 +94,7 @@ public class RegEx {
 	}
 
 	private static int charToRoot(char c) {
+		// Ajout dans le parseur le moyen d'echapper des caracteres
 		if(c == '\\')
 			return -1;
 		if (c == '.')

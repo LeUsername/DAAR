@@ -1,34 +1,23 @@
 package automate;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import tools.Etoile;
 
+/**
+ * Classe qui nous permet de creer un automate de  Aho-Ullman a partir de la representation sous forme de String d'un RegExTree
+ * @author 3408625
+ *
+ */
 public class AutomateBuilder {
 
-	public static Automate unitaire(int t) {
-		Automate a = new Automate(0, 1, 2, 1);
-		if (t == (int) '.') {
-			for (int j = 0; j < Automate.NB_TRANSITIONS; j++) {
-				a.addTransition(0, 1, j);
-			}
-		} else {
-			a.addTransition(0, 1, t);
-		}
-		return a;
-	}
-
-	public static Automate unitairePoint(int t) {
-		Automate a = new Automate(0, 1, 2, 1);
-		a.addTransition(0, 1, t);
-		return a;
-	}
-
+	/**
+	 * Fait l'union entre les deux automates passes en argument
+	 * Renomme tous les etats afin d'avoir 0 en etat de depart et nbEtat en etat de fin
+	 * @param a1 : L'automate a1 dans (a1|a2)
+	 * @param a2 : L'automate a2 dans (a1|a2)
+	 * @return Union de deux automates dont les etats ont ete renommes
+	 */
 	public static Automate union(Automate a1, Automate a2) {
 		int start = 0;
 		int end = a1.getNbStates() + a2.getNbStates() + 1;
@@ -83,6 +72,13 @@ public class AutomateBuilder {
 		return res;
 	}
 
+	/**
+	 * Fait la concatenation entre les deux automates passes en argument
+	 * Renomme tous les etats afin d'avoir 0 en etat de depart et nbEtat en etat de fin
+	 * @param a1 : L'automate a1 dans (a1a2)
+	 * @param a2 : L'automate a2 dans (a1a2)
+	 * @return Concatenation de deux automates dont les etats ont ete renommes
+	 */
 	public static Automate concat(Automate a1, Automate a2) {
 		int start = a1.getStart();
 		int end = a1.getNbStates() + a2.getEnd();
@@ -131,6 +127,12 @@ public class AutomateBuilder {
 		return res;
 	}
 
+	/**
+	 * Applique l'operation etoile sur l'automate passe en argument
+	 * Renomme tous les etats afin d'avoir 0 en etat de depart et nbEtat en etat de fin
+	 * @param a1 : L'automate a1 dans (a1*)
+	 * @return Automate a1 sur lequel a ete applique l'operateur *
+	 */
 	public static Automate etoile(Automate a1) {
 		int start = 0;
 		int end = a1.getNbStates() + 1;
@@ -163,6 +165,80 @@ public class AutomateBuilder {
 		return res;
 	}
 
+	/**
+	 * Parseur qui nous permet de creer un automate en lisant la chaine de caractere qui est la representation sous forme d'abre de la RegEx
+	 * @param expression
+	 * @return
+	 */
+	public static Automate conversion(String expression) {
+		switch (expression.charAt(0)) {
+		case '\\':
+			return unitairePoint((int) expression.charAt(1));
+		case '|':
+			return binaire('|', expression);
+		case '.':
+			if (expression.length() > 1 && expression.charAt(1) == '(') {
+				return binaire('.', expression);
+			} else {
+				return unitaire((int) expression.charAt(0));
+			}
+		case '*':
+			int cptParenthese = 1;
+			StringBuilder truc = new StringBuilder();
+			char courant = '\u0000'; // Valeur null pour char
+			for (int i = 2; i < expression.length(); i++) {
+				courant = expression.charAt(i);
+				if (courant == '(') {
+					cptParenthese++;
+				} else if (courant == ')') {
+					cptParenthese--;
+					if (cptParenthese == 0) { // Si on en est à la parenthèse de fin on sort
+						break;
+					}
+				}
+				truc.append(courant);
+			}
+			return etoile(conversion(truc.toString()));
+		default:
+			return unitaire((int) expression.charAt(0));
+		}
+	}
+	
+	/**
+	 * Ajout d'une transition t (ASCII) entre deux états: cela correspond à l'automate dans le cas de base
+	 * On fait quand meme la difference entre le . (caractere universel) et une transition quelconque
+	 * @param t : la transition a ajouter
+	 * @return Automate (0 -t-> 1)
+	 */
+	public static Automate unitaire(int t) {
+		Automate a = new Automate(0, 1, 2, 1);
+		if (t == (int) '.') {
+			for (int j = 0; j < Automate.NB_TRANSITIONS; j++) {
+				a.addTransition(0, 1, j);
+			}
+		} else {
+			a.addTransition(0, 1, t);
+		}
+		return a;
+	}
+
+	/**
+	 * Ajout du caractere ASCII . dans l'automate
+	 * @param t : la transition a ajouter (ne devrait etre que .)
+	 * @return Automate (0 -.-> 1)
+	 */
+	public static Automate unitairePoint(int t) {
+		Automate a = new Automate(0, 1, 2, 1);
+		a.addTransition(0, 1, t);
+		return a;
+	}
+	
+	/**
+	 * Fonction du parseur qui nous permet de traiter les operations binaire : union ou concat en fonction de l'operateur lu
+	 * @param operateur : l'operateur qui vas etre traiter, l'union '|' ou la concatenantion '.'
+	 * @param expression : la String sur laquelle s'applique l'operateur
+	 * @return
+	 */
 	public static Automate binaire(char operateur, String expression) {
 		int cptParenthese = 1;
 		StringBuilder trucAGauche = new StringBuilder();
@@ -200,40 +276,11 @@ public class AutomateBuilder {
 		}
 	}
 
-	public static Automate conversion(String expression) {
-		switch (expression.charAt(0)) {
-		case '\\':
-			return unitairePoint((int) expression.charAt(1));
-		case '|':
-			return binaire('|', expression);
-		case '.':
-			if (expression.length() > 1 && expression.charAt(1) == '(') {
-				return binaire('.', expression);
-			} else {
-				return unitaire((int) expression.charAt(0));
-			}
-		case '*':
-			int cptParenthese = 1;
-			StringBuilder truc = new StringBuilder();
-			char courant = '\u0000'; // Valeur null pour char
-			for (int i = 2; i < expression.length(); i++) {
-				courant = expression.charAt(i);
-				if (courant == '(') {
-					cptParenthese++;
-				} else if (courant == ')') {
-					cptParenthese--;
-					if (cptParenthese == 0) { // Si on en est à la parenthèse de fin on sort
-						break;
-					}
-				}
-				truc.append(courant);
-			}
-			return etoile(conversion(truc.toString()));
-		default:
-			return unitaire((int) expression.charAt(0));
-		}
-	}
-
+	/**
+	 * Determinise l'automate Aho-Ullman: retire les epsilon transitions et le minimise (les etats danqs l'automate deterministe sont renommes)
+	 * @param a : Automate a determiniser
+	 * @return Automate a determinise
+	 */
 	public static AutomateDeterministe determinise(Automate a) {
 
 		ArrayList<ArrayList<Integer>> etats = new ArrayList<>();
@@ -254,6 +301,12 @@ public class AutomateBuilder {
 		return res;
 	}
 
+	/**
+	 * Retire les epsilon transitions de l'automate passe en argument
+	 * @param a : Automate dont on veut retirer les epsilon transitions
+	 * @param etat : Concatenation des etats separes par des epsilon transitions
+	 * @param d : Etat dont on regarde les epsilon transitions
+	 */
 	private static void eps(Automate a, ArrayList<Integer> etat, int d) {
 		etat.add(d);
 		for (int j = 0; j < a.getNbStates(); j++) {
@@ -263,56 +316,12 @@ public class AutomateBuilder {
 		}
 	}
 
-	private static boolean lecture() {
-		String ligne = null;
-		String[] mots = null;
-		int cpt = 0;
-
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("  >> Please enter a regEx: ");
-		String string = scanner.next();
-		RegEx regEx = new RegEx();
-		regEx.setRegEx(string);
-		RegExTree regExTree = null;
-		try {
-			regExTree = regEx.parse();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		System.out.print("  >> The regExp Tree is : ");
-		System.out.println(regExTree.toString());
-
-		Automate gerp = conversion(regExTree.toString());
-		AutomateDeterministe grep = determinise(gerp);
-
-		try {
-			FileReader f = new FileReader("gutenberg.txt");
-			BufferedReader b = new BufferedReader(f);
-			while ((ligne = b.readLine()) != null) {
-				mots = ligne.split(" ");
-				for (String m : mots) {
-					if (m == "") {
-						continue;
-					}
-					if (monGrep(grep, m)) {
-						cpt++;
-						System.out.println(m);
-					}
-				}
-			}
-			b.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("Impossible de trouver le fichier");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			scanner.close();
-		}
-		System.out.println("I have found " + cpt + " valid words");
-		return false;
-	}
-
+	/**
+	 * La methode que l'automate utilise pour trouver si mot est valide par l'automate deterministe: automate
+	 * @param automate : L'automate deterministe qui permet de reconnait un motif
+	 * @param mot : le mot sur lequel le motif est cherche
+	 * @return True si le mot contient le motif, False sinon
+	 */
 	public static boolean monGrep(AutomateDeterministe automate, String mot) {
 		String mo = mot;
 		int etatCourant = automate.getStart().get(0);
@@ -358,4 +367,58 @@ public class AutomateBuilder {
 		return automate.getEnd().contains(etatCourant);
 	}
 
+//	/**
+//	 * Fonction utiliser pour simuler un main pour tester
+//	 * @return
+//	 */
+//	private static boolean lecture() {
+//		String ligne = null;
+//		String[] mots = null;
+//		int cpt = 0;
+//
+//		Scanner scanner = new Scanner(System.in);
+//		System.out.print("  >> Please enter a regEx: ");
+//		String string = scanner.next();
+//		RegEx regEx = new RegEx();
+//		regEx.setRegEx(string);
+//		RegExTree regExTree = null;
+//		try {
+//			regExTree = regEx.parse();
+//		} catch (Exception e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		System.out.print("  >> The regExp Tree is : ");
+//		System.out.println(regExTree.toString());
+//
+//		Automate gerp = conversion(regExTree.toString());
+//		AutomateDeterministe grep = determinise(gerp);
+//
+//		try {
+//			FileReader f = new FileReader("gutenberg.txt");
+//			BufferedReader b = new BufferedReader(f);
+//			while ((ligne = b.readLine()) != null) {
+//				mots = ligne.split(" ");
+//				for (String m : mots) {
+//					if (m == "") {
+//						continue;
+//					}
+//					if (monGrep(grep, m)) {
+//						cpt++;
+//						System.out.println(m);
+//					}
+//				}
+//			}
+//			b.close();
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Impossible de trouver le fichier");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} finally {
+//			scanner.close();
+//		}
+//		System.out.println("I have found " + cpt + " valid words");
+//		return false;
+//	}
+	
 }

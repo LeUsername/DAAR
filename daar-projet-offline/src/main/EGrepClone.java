@@ -19,6 +19,11 @@ import automate.RegEx;
 import automate.RegExTree;
 import kmp.Matching;
 
+/**
+ * Classe qui represente notre clone de egrep
+ * @author 3408625
+ *
+ */
 public class EGrepClone {
 
 	static String BLACK = "\u001B[0m";
@@ -50,6 +55,9 @@ public class EGrepClone {
 		String fileName = scanner.next();
 		fileName = chemin + fileName;
 
+		/**
+		 * Si le motif rechercher est une regex nous utilisons la methode des automates pour le rechercher sinon si c'est juste une concatenation de caractere alphanumerique nous utilisons l'algorithme de KMP
+		 */
 		if (isRegExp(motif)) {
 
 			RegEx regEx = new RegEx();

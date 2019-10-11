@@ -2,12 +2,31 @@ package kmp;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Classe qui implémente l'algorithme KMP
+ * @author 3408625
+ *
+ */
 public class Matching {
+	
+	/**
+	 * Décomposition en char du motif que nous cherchons
+	 */
 	private char[] facteur;
+	
+	/**
+	 * Un tableau qui nous dit a quel indice de notre motif nous devont retourner si nous ne reconnaissons rien avec ce que nous avons vu jusqu'à present
+	 */
 	private int[] retenue;
 
+	/**
+	 * Si on reconnais plusieurs fois le motif dans le texte on garde les indices de chacun de ses mots
+	 */
 	private ArrayList<Integer> indices;
 
+	/**
+	 * Le texte sur lequel nous cherchons le motif
+	 */
 	private String texte = "";
 
 	public Matching(String chemin, String facteur) {
@@ -22,6 +41,9 @@ public class Matching {
 		indices = new ArrayList<>();
 	}
 
+	/**
+	 * Fonction qui nous permet de calculer correctement la table de retenue
+	 */
 	private void computeRetenue() {
 		if (facteur.length == 0) {
 			return;
@@ -54,6 +76,9 @@ public class Matching {
 				b = 0;
 			}
 		}
+		/**
+		 * On repasse sur le tableau de retenue pour que les memes lettres renvoient a leur premiere occurence
+		 */
 		HashMap<String, Integer> correspondanceLettresIndice = new HashMap<>();
 		correspondanceLettresIndice.put(String.valueOf(facteur[0]), 0);
 		for (int i = 1; i < facteur.length; i++) {
@@ -69,6 +94,9 @@ public class Matching {
 		retenue[retenue.length - 1] = 0;
 	}
 
+	/**
+	 * L'algorithme de KMP qui fonctionne avec le tableau de retenue 
+	 */
 	public void match() {
 		if (facteur.length == 0) {
 			return;

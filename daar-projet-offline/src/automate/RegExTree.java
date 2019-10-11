@@ -31,7 +31,8 @@ public class RegExTree {
 				return "|";
 			if (root == RegEx.DOT)
 				return ".";
-			if( root == (int)'.')
+			// On fait la difference entre DOT qui est le caractere universel et '.' qui est juste le caractere du point 
+			if( root == (int)'.') 
 				return "\\.";
 			return Character.toString((char) root);
 		}
