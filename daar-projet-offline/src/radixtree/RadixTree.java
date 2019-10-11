@@ -222,7 +222,7 @@ public class RadixTree {
 
 	public static void main(String args[]) {
 
-		String fileName = "/users/nfs/Etu5/3408625/Bureau/S3/DAAR/Indexing/bab1.txt";
+		String fileName = "files/bab1.txt";
 		try (Scanner scanner = new Scanner(System.in)) {
 			RadixTree racine = new RadixTree("");
 			racine.build(fileName);
@@ -232,7 +232,7 @@ public class RadixTree {
 				String w = scanner.nextLine();
 				Tuple res = racine.search(w);
 				if (res.occurences.size() == 0) {
-					System.out.println("this world never appears");
+					System.out.println("this word never appears");
 				} else {
 					System.out.println("the word " + w + " appears at : [line,ind] ");
 					System.out.println(res.occurences);

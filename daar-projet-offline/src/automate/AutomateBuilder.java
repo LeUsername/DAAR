@@ -193,11 +193,8 @@ public class AutomateBuilder {
 		if (expression.charAt(0) == '|') {
 			return union(conversion(trucAGauche.toString()), conversion(trucADroite.toString()));
 		} else if (expression.charAt(0) == '.') {
-//			if (trucAGauche.toString().equals("\\")) {
-//				return unitairePoint(Integer.parseInt(trucADroite.toString()));
-//			} else {
+
 				return concat(conversion(trucAGauche.toString()), conversion(trucADroite.toString()));
-//			}
 		} else {
 			return null; // NE DOIT PAS RENTRER DANS CE CAS
 		}
@@ -253,12 +250,6 @@ public class AutomateBuilder {
 				etat = new ArrayList<Integer>();
 			}
 		}
-		// for (ArrayList<Integer> e : etats) {
-		// for (Integer i : e) {
-		// System.out.print(i);
-		// }
-		// System.out.println("---");
-		// }
 		AutomateDeterministe res = new AutomateDeterministe(etats, a);
 		return res;
 	}
@@ -364,36 +355,7 @@ public class AutomateBuilder {
 			}
 			j++;
 		}
-		// for (int i = 0; i < mot.length(); i++) {
-		// if (!transitionsDepuisEtatInitial.contains(Integer.valueOf(((int)
-		// mot.charAt(i)) % 256))
-		// && !premiereLettre) {
-		// transitionsDejaAppliquees.clear();
-		// continue;
-		// } else {
-		// premiereLettre = true;
-		// }
-		// if ((int) mot.charAt(i) == 65279) {
-		// premiereLettre = false;
-		// continue;
-		// }
-		//
-		// etatCourant = automate.getAutom()[etatCourant][((int) mot.charAt(i)) % 256];
-		// if (etatCourant == -1) {
-		// i--;
-		// premiereLettre = false;
-		// etatCourant = automate.getStart().get(0);
-		// } else {
-		// transitionsDejaAppliquees.add(((int) mot.charAt(i)) % 256);
-		// if (automate.getEnd().contains(etatCourant)) {
-		// return true;
-		// }
-		// }
-		// }
 		return automate.getEnd().contains(etatCourant);
 	}
 
-	// public static void main(String arg[]) {
-	// System.out.println(lecture());
-	// }
 }

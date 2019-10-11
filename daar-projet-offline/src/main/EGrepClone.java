@@ -22,7 +22,7 @@ import kmp.Matching;
 public class EGrepClone {
 
 	static String BLACK = "\u001B[0m";
-	static String AUTRE = "\u001B[45m";
+	static String AUTRE = "\u001B[103m";
 
 	static String chemin = "files/";
 

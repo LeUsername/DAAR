@@ -83,24 +83,6 @@ public class AutomateDeterministe {
 		}
 
 		Iterator<Integer> iterateur = correspondance.keySet().iterator();
-//		for (int i = 0; i < a.getNbStates(); i++) {
-//			for (int j = i + 1; j < a.getNbStates(); j++) {
-//				for (int t = 0; t < NB_TRANSITIONS; t++) {
-//					int avecI = a.getAutom()[i][t];
-//					int avecJ = a.getAutom()[j][t];
-//					if (avecI == -1 || avecJ == -1) {
-//						continue;
-//					}
-//					if (avecI == avecJ) {
-//						System.out.println("dedans hehe");
-////						autom[correspondance.get(i)][t] = avecI;
-////						autom[correspondance.get(j)][t] = avecI;
-//						nbTransitions++;
-//					}
-//
-//				}
-//			}
-//		}
 		while (iterateur.hasNext()) {
 			Integer ancienEtat = iterateur.next();
 			if (ancienEtat == a.getEnd()) {
@@ -126,17 +108,6 @@ public class AutomateDeterministe {
 				}
 			}
 		}
-//		start = starts;
-//		end = ends;
-//		nbStates = nbS;
-//		nbTransitions = nbT;		
-//		autom = new int[nbStates][NB_TRANSITIONS];
-//		
-//		for (int i = 0; i < nbStates; i++) {
-//			for (int j = 0; j < NB_TRANSITIONS; j++) {
-//				autom[i][j] = transitions[i][j];
-//			}
-//		}
 	}
 
 	public ArrayList<Integer> getStart() {
