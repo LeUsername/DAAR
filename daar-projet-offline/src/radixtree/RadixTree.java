@@ -1,4 +1,5 @@
 package radixtree;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,7 +17,9 @@ import kmp.Matching;
 import tools.Tuple;
 
 /**
- * Implementation de la structure Radix Tree où chaque noeud contient le plus grand préfixe commun a ses fils.
+ * Implementation de la structure Radix Tree où chaque noeud contient le plus
+ * grand préfixe commun a ses fils.
+ * 
  * @author 3408625
  *
  */
@@ -26,7 +29,7 @@ public class RadixTree {
 	 * Valeur du noeud.
 	 */
 	Tuple value;
-	
+
 	/**
 	 * Liste des fils du noeud.
 	 */
@@ -57,16 +60,19 @@ public class RadixTree {
 	}
 
 	/**
-	 * Methode qui construit un Radix tree a partir d'un fichier, on met dans le radix tree tous les mots qui ont une taille > 2.
-	 * Les mots avec un trait d'union et apostrophe sont consideres comme un seul mot.
-	 * @param chemin : le mot que l'on va stocker actuellement dans l'arbre.
+	 * Methode qui construit un Radix tree a partir d'un fichier, on met dans le
+	 * radix tree tous les mots qui ont une taille > 2. Les mots avec un trait
+	 * d'union et apostrophe sont consideres comme un seul mot.
+	 * 
+	 * @param chemin
+	 *            : le mot que l'on va stocker actuellement dans l'arbre.
 	 */
 	public void build(String chemin) {
 		System.out.println("start");
 		String line = null;
-		
+
 		// L'ensemble des mots que nous souhaitons mettre dans le radix tree
-		Set<String> ensembleMots = new HashSet<>(); 
+		Set<String> ensembleMots = new HashSet<>();
 
 		FileReader fileReader = null;
 		try {
@@ -80,7 +86,7 @@ public class RadixTree {
 						if (m.length() <= 2) {
 							continue;
 						}
-						ensembleMots.add(m.toLowerCase());
+						ensembleMots.add(m);
 					}
 				}
 			} catch (IOException e1) {
@@ -101,10 +107,9 @@ public class RadixTree {
 		int i = 0;
 		System.out.println("computing");
 		for (String l : ensembleMots) {
-
 			i = 0;
 			for (String l2 : lines) {
-				String line2 = l2.toLowerCase();
+				String line2 = l2;
 				i++;
 				Matching m = new Matching(line2, l);
 				m.match();
@@ -112,7 +117,7 @@ public class RadixTree {
 				if (ind.size() == 0) {
 					continue;
 				} else {
-					// Pour chaque mots qui a été reconnus on ajoute sa ligne et son indice 
+					// Pour chaque mots qui a été reconnus on ajoute sa ligne et son indice
 					for (Integer b : ind) {
 						StringBuilder toWrite = new StringBuilder();
 						toWrite.append(i + "," + b);
@@ -127,9 +132,12 @@ public class RadixTree {
 	}
 
 	/**
-	 * Methode qui permet d'ajouter un nouvel element dans le radix tree, si l'element y est deja on ajoute seulement
-	 * la ligne et l'indice auquel il vient d'etre trouve.
-	 * @param tuple : le mot et la paire (ligne, indice) a laquelle il a ete trouvee.
+	 * Methode qui permet d'ajouter un nouvel element dans le radix tree, si
+	 * l'element y est deja on ajoute seulement la ligne et l'indice auquel il vient
+	 * d'etre trouve.
+	 * 
+	 * @param tuple
+	 *            : le mot et la paire (ligne, indice) a laquelle il a ete trouvee.
 	 */
 	public void add(Tuple tuple) {
 		if (tuple.mot.length() == 0) {
@@ -182,16 +190,18 @@ public class RadixTree {
 	}
 
 	/**
-	 * Methode de recherche sur le radix tree: si le mot y est, on recupere tous les endroits ou il apparait et s'il n'y est
-	 * pas il renvoie une liste vide.
-	 * @param r : le mot recherche.
-	 * @return 
+	 * Methode de recherche sur le radix tree: si le mot y est, on recupere tous les
+	 * endroits ou il apparait et s'il n'y est pas il renvoie une liste vide.
+	 * 
+	 * @param r
+	 *            : le mot recherche.
+	 * @return
 	 */
 	public Tuple search(String r) {
 		if (r.length() == 0) {
 			return new Tuple();
 		}
-		String reste = r.toLowerCase();
+		String reste = r;
 		RadixTree rt;
 		ArrayList<RadixTree> current = fils;
 		if (current.size() <= 0) {
@@ -252,14 +262,13 @@ public class RadixTree {
 	}
 
 	public static void main(String args[]) {
-
 		String fileName = "files/bab1.txt";
 		try (Scanner scanner = new Scanner(System.in)) {
 			RadixTree racine = new RadixTree("");
 			racine.build(fileName);
 			String[] tab = fileName.split("/");
 			while (true) {
-				System.out.print("Enter a word to find in " + tab[tab.length - 1]+" >>> ");
+				System.out.print("Enter a word to find in " + tab[tab.length - 1] + " >>> ");
 				String w = scanner.nextLine();
 				Tuple res = racine.search(w);
 				if (res.occurences.size() == 0) {
@@ -270,7 +279,6 @@ public class RadixTree {
 				}
 
 			}
-
 		}
 	}
 
