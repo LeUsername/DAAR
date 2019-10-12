@@ -1,36 +1,40 @@
 package automate;
+
 import java.util.ArrayList;
 
 import tools.Etoile;
 
 /**
- * Classe qui represente un automate dont les transitions correspondent au lettre
+ * Classe qui represente un automate dont les transitions correspondent aux
+ * lettres.
+ * 
  * @author 3408625
  *
  */
 public class Automate {
 
 	static final int NB_TRANSITIONS = 256;
-	
+
 	// Etat de depart
 	private int start = -1;
-	
+
 	// Etat de fin
 	private int end = -1;
-	
+
 	// Nb d'etats dans l'automate
 	private int nbStates = 0;
-	
+
 	// Nb de transitions dans l'automate
 	private int nbTransitions = 0;
 
-	// representation de l'automate : autom[i][t] = j : de l'etat i on peut aller a j avec la transition t si j est a -1 la transition n'est pas possible 
+	// representation de l'automate : autom[i][t] = j : de l'etat i on peut aller a
+	// j avec la transition t si j est a -1 la transition n'est pas possible
 	private int[][] autom;
-	
-	// representation de toute les epsilons transitions 
+
+	// representation de toutes les epsilons transitions
 	private int[][] epsilon;
 
-	// toute les étoiles de l'automate
+	// toutes les étoiles de l'automate
 	private ArrayList<Etoile> etoile = new ArrayList<>();
 
 	public Automate(int s, int e, int nbS, int nbT) {
@@ -116,7 +120,7 @@ public class Automate {
 	public void setEpsilon(int[][] epsilon) {
 		this.epsilon = epsilon;
 	}
-	
+
 	public ArrayList<Etoile> getEtoile() {
 		return etoile;
 	}

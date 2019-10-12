@@ -1,7 +1,7 @@
 package tools;
 
 /**
- * Les états numéroté entre x et y (inclus) sont affecter par l'operateur * de la regex
+ * Les états numérotés entre x et y (inclus) sont affectes par l'operateur * de la regex.
  * @author 341045
  *
  */

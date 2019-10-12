@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import tools.Etoile;
 
 /**
- * Classe qui nous permet de creer un automate de  Aho-Ullman a partir de la representation sous forme de String d'un RegExTree
+ * Classe qui nous permet de creer un automate de Aho-Ullman a partir de la representation sous forme de String d'un RegExTree.
  * @author 3408625
  *
  */
 public class AutomateBuilder {
 
 	/**
-	 * Fait l'union entre les deux automates passes en argument
-	 * Renomme tous les etats afin d'avoir 0 en etat de depart et nbEtat en etat de fin
-	 * @param a1 : L'automate a1 dans (a1|a2)
-	 * @param a2 : L'automate a2 dans (a1|a2)
-	 * @return Union de deux automates dont les etats ont ete renommes
+	 * Fait l'union entre les deux automates passes en argument.
+	 * Renomme tous les etats afin d'avoir 0 en etat de depart et nbEtat en etat de fin.
+	 * @param a1 : l'automate a1 dans (a1|a2).
+	 * @param a2 : l'automate a2 dans (a1|a2).
+	 * @return Union de deux automates dont les etats ont ete renommes.
 	 */
 	public static Automate union(Automate a1, Automate a2) {
 		int start = 0;
@@ -73,11 +73,11 @@ public class AutomateBuilder {
 	}
 
 	/**
-	 * Fait la concatenation entre les deux automates passes en argument
-	 * Renomme tous les etats afin d'avoir 0 en etat de depart et nbEtat en etat de fin
-	 * @param a1 : L'automate a1 dans (a1a2)
-	 * @param a2 : L'automate a2 dans (a1a2)
-	 * @return Concatenation de deux automates dont les etats ont ete renommes
+	 * Fait la concatenation entre les deux automates passes en argument.
+	 * Renomme tous les etats afin d'avoir 0 en etat de depart et nbEtat en etat de fin.
+	 * @param a1 : l'automate a1 dans (a1a2).
+	 * @param a2 : l'automate a2 dans (a1a2).
+	 * @return Concatenation de deux automates dont les etats ont ete renommes.
 	 */
 	public static Automate concat(Automate a1, Automate a2) {
 		int start = a1.getStart();
@@ -128,10 +128,10 @@ public class AutomateBuilder {
 	}
 
 	/**
-	 * Applique l'operation etoile sur l'automate passe en argument
-	 * Renomme tous les etats afin d'avoir 0 en etat de depart et nbEtat en etat de fin
-	 * @param a1 : L'automate a1 dans (a1*)
-	 * @return Automate a1 sur lequel a ete applique l'operateur *
+	 * Applique l'operation etoile sur l'automate passe en argument.
+	 * Renomme tous les etats afin d'avoir 0 en etat de depart et nbEtat en etat de fin.
+	 * @param a1 : l'automate a1 dans (a1*).
+	 * @return Automate a1 sur lequel a ete applique l'operateur *.
 	 */
 	public static Automate etoile(Automate a1) {
 		int start = 0;
@@ -166,9 +166,9 @@ public class AutomateBuilder {
 	}
 
 	/**
-	 * Parseur qui nous permet de creer un automate en lisant la chaine de caractere qui est la representation sous forme d'abre de la RegEx
-	 * @param expression
-	 * @return
+	 * Parseur qui nous permet de creer un automate en lisant la chaine de caractere qui est la representation sous forme d'abre de la RegEx.
+	 * @param expression : suite de la chaine de caracteres a traiter
+	 * @return Automate (non deterministe) acceptant le motif expression
 	 */
 	public static Automate conversion(String expression) {
 		switch (expression.charAt(0)) {
@@ -205,10 +205,10 @@ public class AutomateBuilder {
 	}
 	
 	/**
-	 * Ajout d'une transition t (ASCII) entre deux états: cela correspond à l'automate dans le cas de base
-	 * On fait quand meme la difference entre le . (caractere universel) et une transition quelconque
-	 * @param t : la transition a ajouter
-	 * @return Automate (0 -t-> 1)
+	 * Ajout d'une transition t (ASCII) entre deux états: cela correspond à l'automate dans le cas de base.
+	 * On fait quand meme la difference entre le . (caractere universel) et une transition quelconque.
+	 * @param t : la transition a ajouter.
+	 * @return Automate (0 -t-> 1).
 	 */
 	public static Automate unitaire(int t) {
 		Automate a = new Automate(0, 1, 2, 1);
@@ -223,9 +223,9 @@ public class AutomateBuilder {
 	}
 
 	/**
-	 * Ajout du caractere ASCII . dans l'automate
-	 * @param t : la transition a ajouter (ne devrait etre que .)
-	 * @return Automate (0 -.-> 1)
+	 * Ajout du caractere ASCII . dans l'automate.
+	 * @param t : la transition a ajouter (ne devrait etre que .).
+	 * @return Automate (0 -.-> 1).
 	 */
 	public static Automate unitairePoint(int t) {
 		Automate a = new Automate(0, 1, 2, 1);
@@ -234,10 +234,10 @@ public class AutomateBuilder {
 	}
 	
 	/**
-	 * Fonction du parseur qui nous permet de traiter les operations binaire : union ou concat en fonction de l'operateur lu
-	 * @param operateur : l'operateur qui vas etre traiter, l'union '|' ou la concatenantion '.'
-	 * @param expression : la String sur laquelle s'applique l'operateur
-	 * @return
+	 * Fonction du parseur qui nous permet de traiter les operations binaire : union ou concat en fonction de l'operateur lu.
+	 * @param operateur : l'operateur qui va etre traiter, l'union '|' ou la concatenantion '.'.
+	 * @param expression : la String sur laquelle s'applique l'operateur.
+	 * @return l'automate sur lequel operateur a ete applique sur la chaine de caracteres expression
 	 */
 	public static Automate binaire(char operateur, String expression) {
 		int cptParenthese = 1;
@@ -277,9 +277,9 @@ public class AutomateBuilder {
 	}
 
 	/**
-	 * Determinise l'automate Aho-Ullman: retire les epsilon transitions et le minimise (les etats danqs l'automate deterministe sont renommes)
-	 * @param a : Automate a determiniser
-	 * @return Automate a determinise
+	 * Determinise l'automate Aho-Ullman: retire les epsilon transitions et le minimise (les etats dans l'automate deterministe sont renommes).
+	 * @param a : automate a determiniser.
+	 * @return automate determinise
 	 */
 	public static AutomateDeterministe determinise(Automate a) {
 
@@ -302,10 +302,10 @@ public class AutomateBuilder {
 	}
 
 	/**
-	 * Retire les epsilon transitions de l'automate passe en argument
-	 * @param a : Automate dont on veut retirer les epsilon transitions
-	 * @param etat : Concatenation des etats separes par des epsilon transitions
-	 * @param d : Etat dont on regarde les epsilon transitions
+	 * Retire les epsilon transitions de l'automate passe en argument.
+	 * @param a : automate dont on veut retirer les epsilon transitions.
+	 * @param etat : concatenation des etats separes par des epsilon transitions.
+	 * @param d : etat dont on regarde les epsilon transitions.
 	 */
 	private static void eps(Automate a, ArrayList<Integer> etat, int d) {
 		etat.add(d);
@@ -317,10 +317,10 @@ public class AutomateBuilder {
 	}
 
 	/**
-	 * La methode que l'automate utilise pour trouver si mot est valide par l'automate deterministe: automate
-	 * @param automate : L'automate deterministe qui permet de reconnait un motif
-	 * @param mot : le mot sur lequel le motif est cherche
-	 * @return True si le mot contient le motif, False sinon
+	 * La methode que l'automate utilise pour trouver si mot est valide par l'automate deterministe: automate.
+	 * @param automate : L'automate deterministe qui permet de reconnaitre un motif.
+	 * @param mot : le mot sur lequel le motif est cherche.
+	 * @return True si le mot contient le motif, False sinon.
 	 */
 	public static boolean monGrep(AutomateDeterministe automate, String mot) {
 		String mo = mot;
@@ -368,7 +368,7 @@ public class AutomateBuilder {
 	}
 
 //	/**
-//	 * Fonction utiliser pour simuler un main pour tester
+//	 * Fonction utilisee pour simuler un main pour tester
 //	 * @return
 //	 */
 //	private static boolean lecture() {

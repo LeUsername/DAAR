@@ -16,19 +16,19 @@ import kmp.Matching;
 import tools.Tuple;
 
 /**
- * Implementation de la structure Radix Tree où chaque noeud contient le plus grand préfixe commun a ses fils
+ * Implementation de la structure Radix Tree où chaque noeud contient le plus grand préfixe commun a ses fils.
  * @author 3408625
  *
  */
 public class RadixTree {
 
 	/**
-	 * valeur du noeud
+	 * Valeur du noeud.
 	 */
 	Tuple value;
 	
 	/**
-	 * liste des fils du noeud
+	 * Liste des fils du noeud.
 	 */
 	ArrayList<RadixTree> fils = new ArrayList<>();
 
@@ -57,9 +57,9 @@ public class RadixTree {
 	}
 
 	/**
-	 * methode qui construit un Radix tree a partir d'un fichier, on mets dans le radix tree tous les mots qui ont une taille > 2
-	 * les mots avec avec un trait d'union et apostrophe sont considérés comme un seul mot
-	 * @param chemin
+	 * Methode qui construit un Radix tree a partir d'un fichier, on met dans le radix tree tous les mots qui ont une taille > 2.
+	 * Les mots avec un trait d'union et apostrophe sont consideres comme un seul mot.
+	 * @param chemin : le mot que l'on va stocker actuellement dans l'arbre.
 	 */
 	public void build(String chemin) {
 		System.out.println("start");
@@ -127,8 +127,9 @@ public class RadixTree {
 	}
 
 	/**
-	 * Methode qui permet d'ajouter un nouvel element dans le radix tree, si l'element y ai deja on ajoute la ligne et l'indice auquel il vient d'etre trouvé
-	 * @param tuple
+	 * Methode qui permet d'ajouter un nouvel element dans le radix tree, si l'element y est deja on ajoute seulement
+	 * la ligne et l'indice auquel il vient d'etre trouve.
+	 * @param tuple : le mot et la paire (ligne, indice) a laquelle il a ete trouvee.
 	 */
 	public void add(Tuple tuple) {
 		if (tuple.mot.length() == 0) {
@@ -181,9 +182,10 @@ public class RadixTree {
 	}
 
 	/**
-	 * Methode de recherche sur le radix tree, si le mots y est nous renvoyer tout les endroits ou il apparait et si il n'y est pas il renvoie une liste vide
-	 * @param r : le mot rechercher
-	 * @return
+	 * Methode de recherche sur le radix tree: si le mot y est, on recupere tous les endroits ou il apparait et s'il n'y est
+	 * pas il renvoie une liste vide.
+	 * @param r : le mot recherche.
+	 * @return 
 	 */
 	public Tuple search(String r) {
 		if (r.length() == 0) {

@@ -20,12 +20,17 @@ import automate.RegExTree;
 import kmp.Matching;
 
 /**
- * Classe qui represente notre clone de egrep
+ * Classe qui represente notre clone de egrep.
+ * 
  * @author 3408625
  *
  */
 public class EGrepClone {
 
+	/**
+	 * Variables nous permettant d'afficher en couleur les match. Ne fonctionne pas
+	 * sur la console Eclipse
+	 */
 	static String BLACK = "\u001B[0m";
 	static String AUTRE = "\u001B[103m";
 
@@ -33,7 +38,7 @@ public class EGrepClone {
 
 	static boolean isRegExp(String s) {
 		for (int i = 1; i < s.length(); i++) {
-			if (s.charAt(i) == '.' && s.charAt(i-1) != '\\') {
+			if (s.charAt(i) == '.' && s.charAt(i - 1) != '\\') {
 				return true;
 			}
 		}
@@ -47,16 +52,21 @@ public class EGrepClone {
 
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
-		System.out.print(">> entrez le motif a rechercher :  ");
-		String motif = scanner.next();
-		System.out.println("\n");
-		scanner.reset();
-		System.out.print(">> entrez le nom du fichier (filename.txt) :  ");
-		String fileName = scanner.next();
+		String motif = args[0];
+		String fileName = args[1];
+		// Scanner scanner = new Scanner(System.in);
+		// System.out.print(">> entrez le motif a rechercher : ");
+		// String motif = scanner.next();
+		// System.out.println("\n");
+		// scanner.reset();
+		// System.out.print(">> entrez le nom du fichier (filename.txt) : ");
+		// String fileName = scanner.next();
 		fileName = chemin + fileName;
 
-		/**
-		 * Si le motif rechercher est une regex nous utilisons la methode des automates pour le rechercher sinon si c'est juste une concatenation de caractere alphanumerique nous utilisons l'algorithme de KMP
+		/*
+		 * Si le motif rechercher est une regex nous utilisons la methode des automates
+		 * pour le rechercher sinon si c'est juste une concatenation de caracteres
+		 * alphanumeriques nous utilisons l'algorithme de KMP
 		 */
 		if (isRegExp(motif)) {
 
@@ -111,9 +121,7 @@ public class EGrepClone {
 			} finally {
 				scanner.close();
 			}
-		} else
-
-		{
+		} else {
 			List<String> lines = Collections.emptyList();
 			try {
 				lines = Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);

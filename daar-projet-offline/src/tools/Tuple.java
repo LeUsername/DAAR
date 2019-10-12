@@ -2,7 +2,7 @@ package tools;
 import java.util.ArrayList;
 
 /**
- * Classe qui reprente un couple (A,B) où A est un mot et B la liste de toutes ses occurences : (ligne,indice)
+ * Classe qui represente un couple (A,B) où A est un mot et B la liste de toutes ses occurences : (ligne, indice).
  * @author 3408625
  *
  */

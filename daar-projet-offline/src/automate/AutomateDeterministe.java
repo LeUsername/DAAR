@@ -1,4 +1,5 @@
 package automate;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,16 +10,16 @@ import java.util.Set;
 import tools.Etoile;
 
 /**
- * Classe qui represente un automate determinisé et minimisé
+ * Classe qui represente un automate determinise et minimise.
+ * 
  * @author 3408625
- *
  */
 public class AutomateDeterministe {
 	static final int NB_TRANSITIONS = 256;
 
 	// les états de départ
 	private ArrayList<Integer> start = new ArrayList<Integer>();
-	
+
 	// les états finaux
 	private Set<Integer> end = new HashSet<Integer>();
 
@@ -38,7 +39,8 @@ public class AutomateDeterministe {
 		}
 		/*
 		 * L'etat initial correspond forcement au premier etat etant donne qu'on
-		 * (re)nomme a chaque creation d'automate de maniere a avoir 0 en premier etat
+		 * (re)nomme tous les etats a chaque creation d'automate de maniere a avoir 0 en
+		 * premier etat
 		 */
 		start = etats.get(0);
 		/*
