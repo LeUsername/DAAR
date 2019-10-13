@@ -74,7 +74,7 @@ public class EGrepClone {
 		 * pour le rechercher sinon si c'est juste une concatenation de caracteres
 		 * alphanumeriques nous utilisons l'algorithme de KMP
 		 */
-		if (automate) {
+		if (isRegExp(motif)) {
 			RegEx regEx = new RegEx();
 			regEx.setRegEx(motif);
 			RegExTree regExTree = null;
@@ -129,7 +129,7 @@ public class EGrepClone {
 			} finally {
 				scanner.close();
 			}
-		} else if (kmp) {
+		} else {
 			Instant start = Instant.now();
 			List<String> lines = Collections.emptyList();
 			try {
@@ -161,49 +161,6 @@ public class EGrepClone {
 					}
 					System.out.println();
 				}
-			}
-			Instant end = Instant.now();
-			System.out.println(Duration.between(start, end));
-		} else {
-			RadixTree racine = new RadixTree("");
-			racine.build(fileName);
-			String w = motif;
-			Instant start = Instant.now();
-			Tuple res = racine.search(w);
-			if (res.occurences.size() == 0) {
-				System.out.println("this word never appears");
-			} else {
-				System.out.println("the word " + w + " appears at : [line,ind] ");
-				System.out.println(res.occurences);
-
-			}
-			FileReader fileReader = null;
-			try {
-				fileReader = new FileReader(fileName);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-			int i = 0;
-			String ligne = null;
-			String courant = null;
-			ArrayList<String> occ = res.occurences;
-			try {
-				while (occ.size() > 0 && (ligne = bufferedReader.readLine()) != null) {
-					i++;
-					if (courant == null) {
-						courant = occ.remove(0).split(",")[0];
-					}
-					if (String.valueOf(i).equals(courant)) {
-						System.out.println(ligne);
-						courant = null;
-					}
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			Instant end = Instant.now();
 			System.out.println(Duration.between(start, end));
